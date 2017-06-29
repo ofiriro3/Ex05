@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
@@ -18,12 +18,13 @@ namespace Ex05.WinFormUI
         public FormLogin()
         {
             this.Size = new Size(250, 150);
-            this.FormBorderStyle = FormBorderStyle.FixedToolWindow;
+            this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.StartPosition = FormStartPosition.CenterScreen;
+            this.MaximizeBox = false;
             this.Text = "Bool Pgia";
             r_MinNumberOfChances = 4;
             r_MaxNumberOfChances = 10;
-            m_SelectedNumberOfChances = 4;
+            m_SelectedNumberOfChances = r_MinNumberOfChances;
         }
 
         public int SelectedNumberOfChances
@@ -43,25 +44,32 @@ namespace Ex05.WinFormUI
         {
             InitButtonNumberOfChances();
             InitButtonStart();
+            this.Controls.AddRange(new Control[] { m_ButtonStart, m_ButtonNumberOfChances });
         }
 
         private void InitButtonNumberOfChances()
         {
             m_ButtonNumberOfChances.Text = string.Format("Number of chances: {0}", m_SelectedNumberOfChances);
-            m_ButtonStart.Width = this.Width - 10;
+            m_ButtonNumberOfChances.Width = this.Width - 20;
+            m_ButtonNumberOfChances.Location = new Point(7, 20);
             this.m_ButtonNumberOfChances.Click += new EventHandler(m_ButtonNumberOfChances_Click);
         }
 
         private void InitButtonStart()
         {
             m_ButtonStart.Text = "Start";
+            m_ButtonStart.Location = new Point(m_ButtonNumberOfChances.Right - m_ButtonStart.Width,
+                                               m_ButtonNumberOfChances.Top + 70);
             this.m_ButtonStart.Click += new EventHandler(m_ButtonStart_Click);
         }
 
         void m_ButtonNumberOfChances_Click(object sender, EventArgs e)
         {
-            m_SelectedNumberOfChances++;
-            m_ButtonNumberOfChances.Text = string.Format("Number of chances: {0}", m_SelectedNumberOfChances);
+            if(m_SelectedNumberOfChances < r_MaxNumberOfChances)
+            {
+				m_SelectedNumberOfChances++;
+				m_ButtonNumberOfChances.Text = string.Format("Number of chances: {0}", m_SelectedNumberOfChances);
+            }
         }
 
         void m_ButtonStart_Click(object sender, EventArgs e)
