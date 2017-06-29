@@ -8,9 +8,12 @@ namespace Ex05.WinFormUI
     {
         public static void Main()
         {
-
+/*
             FormGame game = new FormGame();
             game.ShowDialog();
+            */
+            GuessBoxes guess = new GuessBoxes();
+            guess.ShowDialog();
          }  
     }
 }
