@@ -8,7 +8,8 @@ namespace Ex05.WinFormUI
     {
         public static void Main()
         {
-            
+            FormColorChoice form = new FormColorChoice();
+            form.ShowDialog();
         }  
     }
 }
