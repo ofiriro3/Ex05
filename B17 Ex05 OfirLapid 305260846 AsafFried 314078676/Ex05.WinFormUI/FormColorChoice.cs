@@ -75,8 +75,7 @@ namespace Ex05.WinFormUI
             if( button != null)
             {
                 m_UserChocieOfColor = button.BackColor;
-                this.Text = m_UserChocieOfColor.ToString();
-                //this.Close();
+                this.Close();
             }
             
         }
