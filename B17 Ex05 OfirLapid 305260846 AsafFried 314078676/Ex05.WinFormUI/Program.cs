@@ -11,6 +11,6 @@ namespace Ex05.WinFormUI
 
             FormGame game = new FormGame();
             game.ShowDialog();
-        }  
+         }  
     }
 }

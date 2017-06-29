@@ -28,14 +28,15 @@ namespace Ex05.WinFormUI
             this.FormBorderStyle = FormBorderStyle.FixedToolWindow;
             this.Size = new System.Drawing.Size(200, 150);
             m_ColorButtons = new Dictionary<string, ColorButton>();
+            InitControls();
         }
 
-        protected override void OnLoad(EventArgs e)
+       /* protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
             InitControls();
         }
-
+        */
         private void InitControls()
         {
             createColoredButton(Color.Purple);
