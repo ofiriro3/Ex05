@@ -11,7 +11,7 @@ namespace Ex05.WinFormUI
         private const int k_ColorButtonSpacing = 8;
         FormLogin m_LoginForm = new FormLogin();
         static FormColorChoice m_ColorChoiceForm = new FormColorChoice();
-        List<Row> m_GameRows;
+        List<GuessRow> m_GameRows;
         private readonly int r_SelectedNumberOfChances;
 
         public FormGame()
@@ -29,7 +29,7 @@ namespace Ex05.WinFormUI
             {
                 r_SelectedNumberOfChances = m_LoginForm.SelectedNumberOfChances;
                 this.Size = new Size(300, 200 + 40 * r_SelectedNumberOfChances);
-                m_GameRows = new List<Row>(r_SelectedNumberOfChances);
+                m_GameRows = new List<GuessRow>(r_SelectedNumberOfChances);
 				runGame();
 			}
         }
@@ -37,13 +37,17 @@ namespace Ex05.WinFormUI
         private void runGame()
         {
             const int k_RowLeft = 12;
-            const int k_RowTop = 30;
+            const int k_GuessRowTop = 80;
+            const int k_SolutionRowTop = 10;
+
+            SolutionRow solution = new SolutionRow(new Point(k_RowLeft, k_SolutionRowTop), 0);
+            this.Controls.AddRange(solution.GetControls());
 
             for (int i = 0; i < r_SelectedNumberOfChances; i ++)
             {
-                Row row = new Row(new Point(k_RowLeft, k_RowTop), i);
-                m_GameRows.Add(row);
-                this.Controls.AddRange(row.GetControls());
+                GuessRow guess = new GuessRow(new Point(k_RowLeft, k_GuessRowTop), i);
+                m_GameRows.Add(guess);
+                this.Controls.AddRange(guess.GetControls());
             }
         }
 
@@ -60,41 +64,96 @@ namespace Ex05.WinFormUI
 		}
 
 
-        class Row
+		abstract class Row
+		{
+			protected const int k_NumberOfColorBoxes = 4;
+			protected List<ColorButton> m_ColorButtons;
+
+            public Row(Point i_Location, int i_PivotTop, Color i_DefualtColorOfColorButtons)
+			{
+				Point pivotedPoint = new Point(i_Location.X, i_Location.Y + (i_PivotTop * (ColorButton.k_Height + k_ColorButtonSpacing)));
+				createButtons(pivotedPoint, i_DefualtColorOfColorButtons);
+			}
+
+            private void createButtons(Point i_Location, Color i_Color)
+			{
+				m_ColorButtons = new List<ColorButton>(k_NumberOfColorBoxes);
+				for (int i = 0; i < k_NumberOfColorBoxes; i++)
+				{
+					m_ColorButtons.Add(CreateButton(i_Color, new Point(i_Location.X, i_Location.Y), i));
+				}
+			}
+
+            protected virtual ColorButton CreateButton(Color i_Color, Point i_Location, int i_PivotLeft)
+			{
+				ColorButton colorButton = new ColorButton(i_Color);
+
+				colorButton.Location = i_Location;
+				colorButton.Left += i_PivotLeft * (ColorButton.k_Width + k_ColorButtonSpacing);
+
+				return colorButton;
+			}
+
+            public abstract Control[] GetControls();
+		}
+
+		class SolutionRow : Row
+		{
+            public SolutionRow(Point i_Location, int i_PivotTop) : base(i_Location, i_PivotTop, Color.Black)
+			{
+                
+			}
+
+			public override Control[] GetControls()
+			{
+				return m_ColorButtons.ToArray();
+			}
+		}
+
+        class GuessRow : Row
         {
-            private const int k_NumberOfColorBoxes = 4;
-            private List<ColorButton> m_ColorButtons;
 
-            public Row(Point i_Location, int i_PivotTop)
+            private Button m_ApplyGuessButton;
+            private const int k_ApplyButtonXPivot = 10;
+            private const int k_ApplyButtonYPivot = 10;
+
+            public GuessRow(Point i_Location, int i_PivotTop) : base(i_Location, i_PivotTop, Color.Gray)
             {
-                Point pivotedPoint = new Point(i_Location.X, i_Location.Y + (i_PivotTop * (ColorButton.k_Height + k_ColorButtonSpacing))); 
-                createButtons(pivotedPoint);
+                createApplyGuessButton(i_Location, i_PivotTop);
             }
 
-            private void createButtons(Point i_Location)
+            private void createApplyGuessButton(Point i_Location, int i_PivotTop)
             {
-                m_ColorButtons = new List<ColorButton>(k_NumberOfColorBoxes);
-                for (int i = 0; i < k_NumberOfColorBoxes; i++)
-                {
-                    m_ColorButtons.Add(createButton(Color.Gray, new Point(i_Location.X , i_Location.Y), i));
-                }
+                m_ApplyGuessButton = new Button();
+				m_ApplyGuessButton.Width = 40;
+				m_ApplyGuessButton.Height = 20;
+				m_ApplyGuessButton.Text = "-->>";
+                int locationY = i_Location.Y + i_PivotTop * (ColorButton.k_Height + k_ColorButtonSpacing) + k_ApplyButtonYPivot;
+                int locationX = k_NumberOfColorBoxes * (ColorButton.k_Width + k_ColorButtonSpacing) + k_ApplyButtonXPivot;
+                m_ApplyGuessButton.Location = new Point(locationX, locationY);
             }
 
-            private ColorButton createButton(Color i_Color, Point i_Location, int i_PivotLeft)
+            protected override ColorButton CreateButton(Color i_Color, Point i_Location, int i_PivotLeft)
             {
-                ColorButton colorButton = new ColorButton(i_Color);
+                ColorButton colorButton = base.CreateButton(i_Color, i_Location, i_PivotLeft);
 
-                colorButton.Location = i_Location;
-                colorButton.Left += i_PivotLeft * (ColorButton.k_Width + k_ColorButtonSpacing); 
                 colorButton.Click += new EventHandler(ButtonColor_Click);
 
                 return colorButton;
             }
 
-            public Control[] GetControls()
+            public override Control[] GetControls()
             {
                 //TODO: ADD ALL CONTROLS
-                return m_ColorButtons.ToArray();
+                List<Control> controls = new List<Control>();
+
+                foreach (ColorButton button in m_ColorButtons){
+                    controls.Add(button);
+                }
+
+                controls.Add(m_ApplyGuessButton);
+
+                return controls.ToArray();
             }
 
 			void ButtonColor_Click(object sender, EventArgs e)
