@@ -61,5 +61,11 @@
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Ex05.BullsEyeLogic\Ex05.BullsEyeLogic.csproj">
+      <Project>{c5087ffe-d77b-45d2-ac52-6db9b07c0509}</Project>
+      <Name>Ex05.BullsEyeLogic</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using Board = B17_Ex02_Ofir_305260846_Asaf_314078676.Board;
 
 namespace B17_Ex02_Ofir_305260846_Asaf_314078676
 {
@@ -78,37 +77,39 @@ namespace B17_Ex02_Ofir_305260846_Asaf_314078676
             StillPlaying
         }
 
-        public Game()
+        public Turn []  TurnsResult
         {
-            int numberOfGuesses;
-            validGuessNumber(out numberOfGuesses);
-            m_NumberOfTotalGuesses = numberOfGuesses;
-            m_NumOfLeftGuesses = numberOfGuesses;
-            m_TurnArray = new Turn[numberOfGuesses];
-            m_ComputerAnswer = getVerifyInputFromUser(GenerateRandomSolution(r_LengthOfGuess));
+           get
+           {
+                return m_TurnArray;
+           }
         }
 
-        private void validGuessNumber(out int o_NumberOfGuesses)
+        public eGuessResult [] getLastGameResult()
         {
-            bool isValid = false;
-            o_NumberOfGuesses = 0;
-            Board.WriteLine("Please enter valid guess numbers");
-            while (!isValid)
-            {
-                bool isANumber = int.TryParse(Board.ReadLine(), out o_NumberOfGuesses);
-                if (isANumber)
-                {
-                    if (o_NumberOfGuesses >= 4 && o_NumberOfGuesses <= 10)
-                    {
-                        isValid = true;
-                        break;
-                    }
-                }
+            int lastTurn = m_NumberOfTotalGuesses - m_NumOfLeftGuesses + 1;
 
-                Board.WriteLine("This is not a valid input, please enter a number between 4-10");
+            return m_TurnArray[lastTurn].GuessResults;
+        }
+
+        public Game(int i_NumberOfGuess)
+        {
+            if(! validGuessNumber(i_NumberOfGuess))
+            {
+                throw new ArgumentException();
             }
 
-            Board.WriteLine(string.Format("{0} is a valid input ", o_NumberOfGuesses));
+            m_NumberOfTotalGuesses = i_NumberOfGuess;
+            m_NumOfLeftGuesses = i_NumberOfGuess;
+            m_TurnArray = new Turn[i_NumberOfGuess];
+            m_ComputerAnswer = StringToEGuessLetterArrayFormat(GenerateRandomSolution(r_LengthOfGuess));
+        }
+
+        private bool validGuessNumber(int i_NumberOfGuesses)
+        {
+            bool validGuess = (i_NumberOfGuesses > 3 && i_NumberOfGuesses < 11) ? true : false;
+
+            return validGuess;
         }
 
         public eGameResult GameResult
@@ -129,45 +130,37 @@ namespace B17_Ex02_Ofir_305260846_Asaf_314078676
             return m_NumberOfTotalGuesses - m_NumOfLeftGuesses + 1;
         }
 
-        public void Run()
+        public void PlayTurn(string i_GuessFromUser)
         {
-            Ex02.ConsoleUtils.Screen.Clear();
-            Board.PrintBoard(null, r_LengthOfGuess, m_NumberOfTotalGuesses);
-            m_GameResult = eGameResult.StillPlaying;
-            while (m_NumOfLeftGuesses > 0)
-            {
-                string verifiedInputString = VerifyInputFromUser();
 
-                if(verifiedInputString.Equals("Q"))
-                {
-                    m_GameResult = eGameResult.Abort;
-                    break;
-                }
-
-                eGuessLetter[] currentGuess = getVerifyInputFromUser(verifiedInputString);
-               
-               Turn currentTurn = new Turn(m_ComputerAnswer, currentGuess);
-               int cellToAddCurrentTurn = m_NumberOfTotalGuesses - m_NumOfLeftGuesses;
-               m_TurnArray[cellToAddCurrentTurn] = currentTurn;
-               Ex02.ConsoleUtils.Screen.Clear();
-               Board.PrintBoard(m_TurnArray, r_LengthOfGuess,  m_NumberOfTotalGuesses);
-               if (currentTurn.IsCorrect())
-               {
-                   m_GameResult = eGameResult.Win;
-                   break;
-               }
-
-                m_NumOfLeftGuesses--;
-           }
-
-            if(m_NumOfLeftGuesses == 0)
+            if (m_NumOfLeftGuesses <= 0)
             {
                 m_GameResult = eGameResult.Loss;
-                Board.WriteLine(string.Format("The real soultion was {0} , sorry maybe next time.", m_ComputerAnswerStringFormat));
+            }
+            else if (!VerifyInputFromUser(i_GuessFromUser))
+            {
+                throw new ArgumentException();
+            }
+            else
+            {
+                m_GameResult = eGameResult.StillPlaying;
+                eGuessLetter[] currentGuess = StringToEGuessLetterArrayFormat(i_GuessFromUser);
+                Turn currentTurn = new Turn(m_ComputerAnswer, currentGuess);
+                int cellToAddCurrentTurn = m_NumberOfTotalGuesses - m_NumOfLeftGuesses;
+                m_TurnArray[cellToAddCurrentTurn] = currentTurn;
+                m_NumOfLeftGuesses--;
+                if (currentTurn.IsCorrect())
+                {
+                    m_GameResult = eGameResult.Win;
+                }
+                else if (m_NumOfLeftGuesses == 0)
+                {
+                    m_GameResult = eGameResult.Loss;
+                }
             }
         }
 
-        private eGuessLetter[] getVerifyInputFromUser(string i_VerifiedInputString)
+        private eGuessLetter[] StringToEGuessLetterArrayFormat(string i_VerifiedInputString)
         {
             eGuessLetter[] guessArray = new eGuessLetter[r_LengthOfGuess];
             string inputWithoutSpaces = i_VerifiedInputString.Replace(" ", string.Empty);
@@ -181,41 +174,29 @@ namespace B17_Ex02_Ofir_305260846_Asaf_314078676
             return guessArray;
         }
 
-        private string VerifyInputFromUser()
+        private bool VerifyInputFromUser(String i_InputFromUser)
         {
-            string inputFromUser = Board.ReadGuess();
-            
-                while (!inputFromUser.Equals("Q") && 
-                    (!checkValidInputFormat(inputFromUser) || !checkValidInputContext(inputFromUser)))
-                {
-                    inputFromUser = Board.ReadGuess();
-                }
-            
-            return inputFromUser;
+               bool isValidInputFromUser =  checkValidInputContext(i_InputFromUser) && checkValidInputFormat(i_InputFromUser);
+
+               return isValidInputFromUser;
         }
 
         private bool checkValidInputFormat(string i_InputFromUser)
         {
-            bool validFormat = true;
+            bool validFormat = false;
             string inputWithoutSpaces = i_InputFromUser.Replace(" ", string.Empty);
-            if (inputWithoutSpaces.Length == 4)
+            if (inputWithoutSpaces.Length == 4 )
             {
                 foreach (char currentLetter in inputWithoutSpaces)
                 {
                     if ((currentLetter < 'A' || currentLetter > 'Z') && (currentLetter != '\b'))
                     {
                         validFormat = false;
-                        Board.WriteLine("Wrong format please choose Capitals letter");
                         break;
                     }
                 }
             }
-            else
-            {
-                Board.WriteLine(string.Format("Please enter only {0} letters", r_LengthOfGuess));
-                validFormat = false;
-            }
-
+            
             return validFormat;
         }
     
@@ -228,7 +209,6 @@ namespace B17_Ex02_Ofir_305260846_Asaf_314078676
                     if (currentLetter < 'A' || currentLetter > 'H')
                     {
                         validContext = false;
-                        Board.WriteLine("Wrong context , please enter only letters between A and H");
                         break;
                     }
             }
@@ -238,12 +218,12 @@ namespace B17_Ex02_Ofir_305260846_Asaf_314078676
 
         public string GenerateRandomSolution(int i_lengthOfSolution)
         {
+            Random random = new Random();
             StringBuilder solution = new StringBuilder();
             int amountOfEnumOptions = Enum.GetNames(typeof(eGuessLetter)).Length;
 
             for (int i = 0; i < i_lengthOfSolution; i++)
             {
-                Random random = new Random();
                 int randomNumber = random.Next(amountOfEnumOptions);
                 char currentChar = (char)('A' + randomNumber);
 
