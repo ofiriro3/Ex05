@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{C5087FFE-D77B-45D2-AC52-6DB9B07C0509}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <RootNamespace>Ex05.BullsEyeLogic</RootNamespace>
     <AssemblyName>Ex05.BullsEyeLogic</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
@@ -30,9 +30,8 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <ItemGroup>
-    <Compile Include="Game.cs" />
-    <Compile Include="Turn.cs" />
-  </ItemGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{BFA63051-03A0-466B-9501-6DEDB5D0FF12}</ProjectGuid>
-    <OutputType>Exe</OutputType>
+    <OutputType>WinExe</OutputType>
     <RootNamespace>Ex05.WinFormUI</RootNamespace>
     <AssemblyName>Ex05.WinFormUI</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
@@ -30,12 +30,17 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="FormColorChoice.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="FormGame.cs" />
-    <Compile Include="FormLogin.cs" />
+    <Compile Include="FormLogin.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Program.cs" />
   </ItemGroup>
   <ItemGroup>
