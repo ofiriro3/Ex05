@@ -11,6 +11,17 @@ namespace Ex05.WinFormUI
         Dictionary<String, ColorButton> m_ColorButtons;
         const int k_NumberOfButtonInARow = 4;
         const int k_NumberOfButtonInAColumn = 2;
+        Nullable<Color> m_UserChocieOfColor = null;
+
+        public Nullable<Color> UserChoiceOfColor
+        {
+            get
+            {
+                return m_UserChocieOfColor;
+            }
+            
+
+        }
         public FormColorChoice()
         {
             this.Text = "Pick A Color:";
@@ -35,13 +46,15 @@ namespace Ex05.WinFormUI
             createColoredButton(Color.Yellow);
             createColoredButton(Color.Brown);
             createColoredButton(Color.White);
-            int xPosition = (this.ClientSize.Width - k_NumberOfButtonInARow * 40) / 2;
-            int yPosition = (this.ClientSize.Height - k_NumberOfButtonInAColumn * 40) / 2;
+            int xPosition = (this.ClientSize.Width - k_NumberOfButtonInARow * ColorButton.k_Width) / 2;
+            int yPosition = (this.ClientSize.Height - k_NumberOfButtonInAColumn * ColorButton.k_Height) / 2;
             int numOfButtonInCurrentRow = 0;
-            foreach(Button button in m_ColorButtons.Values)
+
+            foreach (Button button in m_ColorButtons.Values)
             {
                 this.Controls.Add(button);
                 button.Location = new Point(xPosition, yPosition);
+                button.Click += new EventHandler(OnClickColoredButton);
                 xPosition += button.Width + 2;
                 numOfButtonInCurrentRow++;
 
@@ -53,6 +66,19 @@ namespace Ex05.WinFormUI
                 }
                 
             }
+        }
+
+        private void OnClickColoredButton(Object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.OK;
+            Button button = sender as Button;
+            if( button != null)
+            {
+                m_UserChocieOfColor = button.BackColor;
+                this.Text = m_UserChocieOfColor.ToString();
+                //this.Close();
+            }
+            
         }
 
         private void createColoredButton(Color i_Color)
