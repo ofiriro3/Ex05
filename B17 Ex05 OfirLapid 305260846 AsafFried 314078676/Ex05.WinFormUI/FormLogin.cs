@@ -52,7 +52,7 @@ namespace Ex05.WinFormUI
             m_ButtonNumberOfChances.Text = string.Format("Number of chances: {0}", m_SelectedNumberOfChances);
             m_ButtonNumberOfChances.Width = this.Width - 20;
             m_ButtonNumberOfChances.Location = new Point(7, 20);
-            this.m_ButtonNumberOfChances.Click += new EventHandler(m_ButtonNumberOfChances_Click);
+            this.m_ButtonNumberOfChances.Click += new EventHandler(ButtonNumberOfChances_Click);
         }
 
         private void InitButtonStart()
@@ -60,10 +60,10 @@ namespace Ex05.WinFormUI
             m_ButtonStart.Text = "Start";
             m_ButtonStart.Location = new Point(m_ButtonNumberOfChances.Right - m_ButtonStart.Width,
                                                m_ButtonNumberOfChances.Top + 70);
-            this.m_ButtonStart.Click += new EventHandler(m_ButtonStart_Click);
+            this.m_ButtonStart.Click += new EventHandler(ButtonStart_Click);
         }
 
-        void m_ButtonNumberOfChances_Click(object sender, EventArgs e)
+        void ButtonNumberOfChances_Click(object sender, EventArgs e)
         {
             if(m_SelectedNumberOfChances < r_MaxNumberOfChances)
             {
@@ -72,7 +72,7 @@ namespace Ex05.WinFormUI
             }
         }
 
-        void m_ButtonStart_Click(object sender, EventArgs e)
+        void ButtonStart_Click(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.OK;
             this.Close();
