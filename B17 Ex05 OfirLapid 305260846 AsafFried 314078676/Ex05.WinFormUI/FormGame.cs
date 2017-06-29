@@ -8,6 +8,7 @@ namespace Ex05.WinFormUI
 {
     class FormGame : Form
     {
+        private const int k_ColorButtonSpacing = 8;
         FormLogin m_LoginForm = new FormLogin();
         List<Row> m_GameRows;
         private readonly int r_SelectedNumberOfChances;
@@ -26,7 +27,7 @@ namespace Ex05.WinFormUI
             else
             {
                 r_SelectedNumberOfChances = m_LoginForm.SelectedNumberOfChances;
-                this.Size = new Size(350, 450 + 20 * r_SelectedNumberOfChances);
+                this.Size = new Size(300, 200 + 40 * r_SelectedNumberOfChances);
                 m_GameRows = new List<Row>(r_SelectedNumberOfChances);
 				runGame();
 			}
@@ -34,12 +35,14 @@ namespace Ex05.WinFormUI
 
         private void runGame()
         {
-            int spaceLeftOfRow = 10;
-            int spaceTopOfRow = 10;
+            const int k_RowLeft = 12;
+            const int k_RowTop = 30;
 
             for (int i = 0; i < r_SelectedNumberOfChances; i ++)
             {
-                m_GameRows.Add(new Row(new Point(spaceLeftOfRow, spaceTopOfRow)), i);
+                Row row = new Row(new Point(k_RowLeft, k_RowTop), i);
+                m_GameRows.Add(row);
+                this.Controls.AddRange(row.GetControls());
             }
         }
 
@@ -52,7 +55,7 @@ namespace Ex05.WinFormUI
 
 		private void InitControls()
 		{
-			this.Controls.AddRange(new Control[] {});
+			//TODO:
 		}
 
         class Row
@@ -62,9 +65,7 @@ namespace Ex05.WinFormUI
 
             public Row(Point i_Location, int i_PivotTop)
             {
-                int space = 5;
-
-                Point pivotedPoint = new Point(i_Location.X, i_Location.Y + (i_PivotTop * 40 + space));
+                Point pivotedPoint = new Point(i_Location.X, i_Location.Y + (i_PivotTop * (40 + k_ColorButtonSpacing))); //TODO: CHANGE 40 TO THE CONST HEIGHT OF COLOR BOX
                 createButtons(pivotedPoint);
             }
 
@@ -79,18 +80,18 @@ namespace Ex05.WinFormUI
 
             private ColorButton createButton(Color i_Color, Point i_Location, int i_PivotLeft)
             {
-                int space = 5;
                 ColorButton colorButton = new ColorButton(i_Color);
 
                 colorButton.Location = i_Location;
-                colorButton.Left += i_PivotLeft * colorButton.Width + space;
+                colorButton.Left += i_PivotLeft * (40 + k_ColorButtonSpacing); //TODO: 40
 
                 return colorButton;
             }
 
             public Control[] GetControls()
             {
-                return null;
+                //TODO: ADD ALL CONTROLS
+                return m_ColorButtons.ToArray();
             }
         }
     }
