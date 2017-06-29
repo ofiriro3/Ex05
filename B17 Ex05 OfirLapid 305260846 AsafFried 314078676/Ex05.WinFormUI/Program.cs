@@ -4,7 +4,11 @@ using System.Text;
 
 namespace Ex05.WinFormUI
 {
-    class Program
+    public class Program
     {
+        public static void Main()
+        {
+            
+        }  
     }
 }
