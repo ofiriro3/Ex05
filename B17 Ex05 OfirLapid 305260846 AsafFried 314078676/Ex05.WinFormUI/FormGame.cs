@@ -6,10 +6,11 @@ using System.Drawing;
 
 namespace Ex05.WinFormUI
 {
-    class FormGame : Form
+    public class FormGame : Form
     {
         private const int k_ColorButtonSpacing = 8;
         FormLogin m_LoginForm = new FormLogin();
+        static FormColorChoice m_ColorChoiceForm = new FormColorChoice();
         List<Row> m_GameRows;
         private readonly int r_SelectedNumberOfChances;
 
@@ -58,6 +59,7 @@ namespace Ex05.WinFormUI
 			//TODO:
 		}
 
+
         class Row
         {
             private const int k_NumberOfColorBoxes = 4;
@@ -65,7 +67,7 @@ namespace Ex05.WinFormUI
 
             public Row(Point i_Location, int i_PivotTop)
             {
-                Point pivotedPoint = new Point(i_Location.X, i_Location.Y + (i_PivotTop * (40 + k_ColorButtonSpacing))); //TODO: CHANGE 40 TO THE CONST HEIGHT OF COLOR BOX
+                Point pivotedPoint = new Point(i_Location.X, i_Location.Y + (i_PivotTop * (ColorButton.k_Height + k_ColorButtonSpacing))); 
                 createButtons(pivotedPoint);
             }
 
@@ -83,7 +85,8 @@ namespace Ex05.WinFormUI
                 ColorButton colorButton = new ColorButton(i_Color);
 
                 colorButton.Location = i_Location;
-                colorButton.Left += i_PivotLeft * (40 + k_ColorButtonSpacing); //TODO: 40
+                colorButton.Left += i_PivotLeft * (ColorButton.k_Width + k_ColorButtonSpacing); 
+                colorButton.Click += new EventHandler(ButtonColor_Click);
 
                 return colorButton;
             }
@@ -93,6 +96,15 @@ namespace Ex05.WinFormUI
                 //TODO: ADD ALL CONTROLS
                 return m_ColorButtons.ToArray();
             }
+
+			void ButtonColor_Click(object sender, EventArgs e)
+			{
+                m_ColorChoiceForm.ShowDialog();
+				if (m_ColorChoiceForm.UserChoiceOfColor != null)
+				{
+					(sender as Button).BackColor = m_ColorChoiceForm.UserChoiceOfColor.Value;
+				}
+			}
         }
     }
 }
