@@ -42,7 +42,7 @@ namespace Ex05.WinFormUI
             createColoredButton(Color.Purple);
             createColoredButton(Color.Red);
             createColoredButton(Color.Green);
-            createColoredButton(Color.WhiteSmoke);
+            createColoredButton(Color.AliceBlue);
             createColoredButton(Color.Blue);
             createColoredButton(Color.Yellow);
             createColoredButton(Color.Brown);

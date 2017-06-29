@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using eGuessLetter = B17_Ex02_Ofir_305260846_Asaf_314078676.Game.eGuessLetter;
-using eGuessResult = B17_Ex02_Ofir_305260846_Asaf_314078676.Game.eGuessResult;
+using eGuessLetter = Ex05.BullsEyeLogic.Game.eGuessLetter;
+using eGuessResult = Ex05.BullsEyeLogic.Game.eGuessResult;
 
-namespace B17_Ex02_Ofir_305260846_Asaf_314078676
+namespace Ex05.BullsEyeLogic
 {
     public class Turn
     {

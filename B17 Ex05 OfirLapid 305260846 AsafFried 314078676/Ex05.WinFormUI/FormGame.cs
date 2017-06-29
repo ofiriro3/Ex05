@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
 using System.Drawing;
-
+using Ex05.BullsEyeLogic;
 namespace Ex05.WinFormUI
 {
     public class FormGame : Form
     {
+        private Game m_Game;
         private const int k_ColorButtonSpacing = 8;
         FormLogin m_LoginForm = new FormLogin();
         static FormColorChoice m_ColorChoiceForm = new FormColorChoice();
         List<GuessRow> m_GameRows;
         private readonly int r_SelectedNumberOfChances;
-
+        
         public FormGame()
         {
 			this.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -138,7 +139,7 @@ namespace Ex05.WinFormUI
                 m_AnswersBoxes = new List<Button>();
                 int locationY = YValue + k_AnswerBoxYPivot - k_ButtonWidth;
                 int locationX = XValue + k_AnswerBoxXPivot;
-
+                
                 for (int i = 0; i < k_NumberOfColorBoxes; i++)
                     {
                         Button button = new Button();

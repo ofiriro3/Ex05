@@ -28,7 +28,7 @@ namespace Ex05.WinFormUI
 
             switch (color.Name)
             {
-                case "Purple": letterThatColorRepresent = 'a'; break;
+                //case "Purple": letterThatColorRepresent = 'a'; break;
                 case "Red": letterThatColorRepresent = 'b'; break;
                 case "Green": letterThatColorRepresent = 'c'; break;
                 case "AliceBlue": letterThatColorRepresent = 'd'; break;
