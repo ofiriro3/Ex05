@@ -12,11 +12,11 @@ namespace Ex05.WinFormUI
             form.ShowDialog();
 
             
-            /*
+            
             FormLogin login = new FormLogin();
             login.ShowDialog();
 
-    */
+    
         }  
     }
 }
