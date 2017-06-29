@@ -116,10 +116,36 @@ namespace Ex05.WinFormUI
             private Button m_ApplyGuessButton;
             private const int k_ApplyButtonXPivot = 10;
             private const int k_ApplyButtonYPivot = 10;
+            private List<Button> m_AnswersBoxes;
 
             public GuessRow(Point i_Location, int i_PivotTop) : base(i_Location, i_PivotTop, Color.Gray)
             {
                 createApplyGuessButton(i_Location, i_PivotTop);
+                createAnswersBoxes(20, 30);
+
+            }
+
+            private void createAnswersBoxes(int XValue, int YValue)
+            {
+                m_AnswersBoxes = new List<Button>();
+                int x = XValue;
+                int y = YValue;
+
+                    for (int i = 0; i < 4; i++)
+                    {
+                        Button button = new Button();
+                        button.Width = 15;
+                        button.Height = 15;
+                        if (i % 2 == 0)
+                        {
+                            x = 50;
+                            y += button.Height + 3;
+                        }
+
+                        button.Location = new Point(x, y);
+                        x += button.Width + 3;
+                        m_AnswersBoxes.Add(button);
+                     }
             }
 
             private void createApplyGuessButton(Point i_Location, int i_PivotTop)
@@ -151,8 +177,14 @@ namespace Ex05.WinFormUI
                     controls.Add(button);
                 }
 
-                controls.Add(m_ApplyGuessButton);
+                foreach (Button button in m_AnswersBoxes)
+                {
+                    controls.Add(button);
+                }
 
+
+                controls.Add(m_ApplyGuessButton);
+                
                 return controls.ToArray();
             }
 
