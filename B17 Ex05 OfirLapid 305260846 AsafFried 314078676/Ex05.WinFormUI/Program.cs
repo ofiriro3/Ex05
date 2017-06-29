@@ -13,8 +13,8 @@ namespace Ex05.WinFormUI
 
             
             
-            FormLogin login = new FormLogin();
-            login.ShowDialog();
+           // FormLogin login = new FormLogin();
+            //login.ShowDialog();
 
     
         }  

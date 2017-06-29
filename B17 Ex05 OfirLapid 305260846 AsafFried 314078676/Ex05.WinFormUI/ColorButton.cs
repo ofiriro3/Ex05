@@ -8,8 +8,8 @@ namespace Ex05.WinFormUI
 {
     public class ColorButton : Button
     {
-        const int k_Height = 100;
-        const int k_Width = 100;
+        public const int k_Height = 40;
+        public const int k_Width = 40;
 
         public ColorButton(Color i_Color): base()
         {
