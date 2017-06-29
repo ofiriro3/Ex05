@@ -106,7 +106,6 @@ namespace Ex05.WinFormUI
 
 			public override Control[] GetControls()
 			{
-				//TODO: ADD ALL CONTROLS
 				return m_ColorButtons.ToArray();
 			}
 		}
@@ -114,9 +113,24 @@ namespace Ex05.WinFormUI
         class GuessRow : Row
         {
 
+            private Button m_ApplyGuessButton;
+            private const int k_ApplyButtonXPivot = 10;
+            private const int k_ApplyButtonYPivot = 10;
+
             public GuessRow(Point i_Location, int i_PivotTop) : base(i_Location, i_PivotTop, Color.Gray)
             {
+                createApplyGuessButton(i_Location, i_PivotTop);
+            }
 
+            private void createApplyGuessButton(Point i_Location, int i_PivotTop)
+            {
+                m_ApplyGuessButton = new Button();
+				m_ApplyGuessButton.Width = 40;
+				m_ApplyGuessButton.Height = 20;
+				m_ApplyGuessButton.Text = "-->>";
+                int locationY = i_Location.Y + i_PivotTop * (ColorButton.k_Height + k_ColorButtonSpacing) + k_ApplyButtonYPivot;
+                int locationX = k_NumberOfColorBoxes * (ColorButton.k_Width + k_ColorButtonSpacing) + k_ApplyButtonXPivot;
+                m_ApplyGuessButton.Location = new Point(locationX, locationY);
             }
 
             protected override ColorButton CreateButton(Color i_Color, Point i_Location, int i_PivotLeft)
@@ -131,7 +145,15 @@ namespace Ex05.WinFormUI
             public override Control[] GetControls()
             {
                 //TODO: ADD ALL CONTROLS
-                return m_ColorButtons.ToArray();
+                List<Control> controls = new List<Control>();
+
+                foreach (ColorButton button in m_ColorButtons){
+                    controls.Add(button);
+                }
+
+                controls.Add(m_ApplyGuessButton);
+
+                return controls.ToArray();
             }
 
 			void ButtonColor_Click(object sender, EventArgs e)
