@@ -116,7 +116,7 @@ namespace Ex05.WinFormUI
             private Button m_ApplyGuessButton;
             private const int k_ApplyButtonXPivot = 10;
             private const int k_ApplyButtonYPivot = 10;
-			private const int k_AnswerBoxXPivot = 60;
+			private const int k_AnswerBoxXPivot = 60; //TODO : USE CONST
 			private const int k_AnswerBoxYPivot = 0;
             private List<Button> m_AnswersBoxes;
 
@@ -139,7 +139,7 @@ namespace Ex05.WinFormUI
                 int locationY = YValue + k_AnswerBoxYPivot - k_ButtonWidth;
                 int locationX = XValue + k_AnswerBoxXPivot;
 
-                    for (int i = 0; i < 4; i++)
+                for (int i = 0; i < k_NumberOfColorBoxes; i++)
                     {
                         Button button = new Button();
                         button.Width = k_ButtonWidth;
@@ -159,12 +159,14 @@ namespace Ex05.WinFormUI
             private void createApplyGuessButton(int XValue, int YValue)
             {
                 m_ApplyGuessButton = new Button();
-				m_ApplyGuessButton.Width = 40;
+				m_ApplyGuessButton.Width = 40; //TODO : ADD const
 				m_ApplyGuessButton.Height = 20;
 				m_ApplyGuessButton.Text = "-->>";
                 int locationY = YValue + k_ApplyButtonYPivot;
                 int locationX = XValue + k_ApplyButtonXPivot;
                 m_ApplyGuessButton.Location = new Point(locationX, locationY);
+                m_ApplyGuessButton.Enabled = false;
+                m_ApplyGuessButton.Click += new EventHandler(ButtonApply_Click);
             }
 
             protected override ColorButton CreateButton(Color i_Color, Point i_Location, int i_PivotLeft)
@@ -196,13 +198,43 @@ namespace Ex05.WinFormUI
                 return controls.ToArray();
             }
 
+            bool checkValidGuess()
+            {
+                bool validGuess = true;
+
+                foreach(ColorButton button in m_ColorButtons)
+                {
+                    if(button.BackColor.Equals(Color.Gray))
+                    {
+                        validGuess = false;
+                        break;
+                    }
+                }
+
+                return validGuess;
+            }
+
 			void ButtonColor_Click(object sender, EventArgs e)
 			{
+
                 m_ColorChoiceForm.ShowDialog();
 				if (m_ColorChoiceForm.UserChoiceOfColor != null)
 				{
 					(sender as Button).BackColor = m_ColorChoiceForm.UserChoiceOfColor.Value;
 				}
+
+				bool validGuess = checkValidGuess();
+
+                if(validGuess)
+                {
+                    m_ApplyGuessButton.Enabled = true;
+                }
+                 
+			}
+
+			void ButtonApply_Click(object sender, EventArgs e)
+			{
+                
 			}
         }
     }
