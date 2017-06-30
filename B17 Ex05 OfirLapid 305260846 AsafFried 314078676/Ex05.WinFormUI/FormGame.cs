@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
@@ -116,46 +116,54 @@ namespace Ex05.WinFormUI
             private Button m_ApplyGuessButton;
             private const int k_ApplyButtonXPivot = 10;
             private const int k_ApplyButtonYPivot = 10;
+			private const int k_AnswerBoxXPivot = 60;
+			private const int k_AnswerBoxYPivot = 0;
             private List<Button> m_AnswersBoxes;
 
             public GuessRow(Point i_Location, int i_PivotTop) : base(i_Location, i_PivotTop, Color.Gray)
             {
-                createApplyGuessButton(i_Location, i_PivotTop);
-                createAnswersBoxes(20, 30);
+                int locationY = i_Location.Y + i_PivotTop * (ColorButton.k_Height + k_ColorButtonSpacing);
+                int locationX = k_NumberOfColorBoxes * (ColorButton.k_Width + k_ColorButtonSpacing);
+
+                createApplyGuessButton(locationX, locationY);
+                createAnswersBoxes(locationX, locationY);
 
             }
 
             private void createAnswersBoxes(int XValue, int YValue)
             {
+                const int k_ButtonWidth = 15;
+                const int k_ButtonHeight = 15;
+                const int k_Pivot = 3;
                 m_AnswersBoxes = new List<Button>();
-                int x = XValue;
-                int y = YValue;
+                int locationY = YValue + k_AnswerBoxYPivot - k_ButtonWidth;
+                int locationX = XValue + k_AnswerBoxXPivot;
 
                     for (int i = 0; i < 4; i++)
                     {
                         Button button = new Button();
-                        button.Width = 15;
-                        button.Height = 15;
+                        button.Width = k_ButtonWidth;
+                        button.Height = k_ButtonHeight;
                         if (i % 2 == 0)
                         {
-                            x = 50;
-                            y += button.Height + 3;
+                            locationX = XValue + k_AnswerBoxXPivot;
+                            locationY += button.Height + k_Pivot;
                         }
 
-                        button.Location = new Point(x, y);
-                        x += button.Width + 3;
+                        button.Location = new Point(locationX, locationY);
+                        locationX += button.Width + k_Pivot;
                         m_AnswersBoxes.Add(button);
                      }
             }
 
-            private void createApplyGuessButton(Point i_Location, int i_PivotTop)
+            private void createApplyGuessButton(int XValue, int YValue)
             {
                 m_ApplyGuessButton = new Button();
 				m_ApplyGuessButton.Width = 40;
 				m_ApplyGuessButton.Height = 20;
 				m_ApplyGuessButton.Text = "-->>";
-                int locationY = i_Location.Y + i_PivotTop * (ColorButton.k_Height + k_ColorButtonSpacing) + k_ApplyButtonYPivot;
-                int locationX = k_NumberOfColorBoxes * (ColorButton.k_Width + k_ColorButtonSpacing) + k_ApplyButtonXPivot;
+                int locationY = YValue + k_ApplyButtonYPivot;
+                int locationX = XValue + k_ApplyButtonXPivot;
                 m_ApplyGuessButton.Location = new Point(locationX, locationY);
             }
 
