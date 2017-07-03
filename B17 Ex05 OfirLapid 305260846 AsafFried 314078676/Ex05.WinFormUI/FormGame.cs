@@ -14,7 +14,8 @@ namespace Ex05.WinFormUI
         static FormColorChoice m_ColorChoiceForm = new FormColorChoice();
         List<GuessRow> m_GameRows;
         private readonly int r_SelectedNumberOfChances;
-        
+        private SolutionRow m_SolutionRow; 
+
         public FormGame()
         {
 			this.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -43,6 +44,7 @@ namespace Ex05.WinFormUI
             const int k_SolutionRowTop = 10;
 
             SolutionRow solution = new SolutionRow(new Point(k_RowLeft, k_SolutionRowTop), 0);
+            m_SolutionRow = solution;
             this.Controls.AddRange(solution.GetControls());
 
             for (int i = 0; i < r_SelectedNumberOfChances; i ++)
@@ -54,7 +56,7 @@ namespace Ex05.WinFormUI
             }
         }
 
-        public void FinishGame()
+        public void FinishGame(List<ColorButton> lastGuess)
 		{
             foreach (Control control in this.Controls)
             {
@@ -64,7 +66,14 @@ namespace Ex05.WinFormUI
                 }
             }
 
-            //TODO: show solutions in solution row
+            int counter = 0;
+            Control[] controls = m_SolutionRow.GetControls();
+            foreach(ColorButton guess in lastGuess)
+            {
+                (controls[counter] as ColorButton).BackColor = guess.BackColor;
+                counter++;
+            }
+           
 		}
 
 		protected override void OnLoad(EventArgs e)
@@ -121,7 +130,7 @@ namespace Ex05.WinFormUI
 
         class GuessRow : Row
         {
-            public delegate void CorrectGuessDelegate();
+            public delegate void CorrectGuessDelegate(List<ColorButton> i_LastGuess);
             public event CorrectGuessDelegate AfterSuccessfulGuess;
             private Button m_ApplyGuessButton;
             private const int k_ApplyButtonXPivot = 10;
@@ -256,7 +265,7 @@ namespace Ex05.WinFormUI
                 String guessOfTheUser = CovertColoredButtonsToStringGuessRepresentation();
                 m_Game.PlayTurn(guessOfTheUser);
                 interpretResult();
-                if (isGameOver())
+                if (isWonTheGame())
                 {
                     OnSuccessfulGuess();
                 }
@@ -274,24 +283,15 @@ namespace Ex05.WinFormUI
 			{
                 if (AfterSuccessfulGuess != null)
 				{
-                    AfterSuccessfulGuess.Invoke();
+                    AfterSuccessfulGuess.Invoke(m_ColorButtons);
 		        }
 			}
 
-            private bool isGameOver()
+            private bool isWonTheGame()
             {
-                bool gameOver = true;;
+                Game.eGameResult gameStatus = m_Game.GameResult;
 
-                foreach (Button box in m_AnswersBoxes)
-                {
-                    if(!(box.BackColor == Color.Black))
-                    {
-                        gameOver = false;
-                        break;
-                    }
-                }
-
-                return gameOver;
+                return (gameStatus.Equals(Game.eGameResult.StillPlaying));
             }
 
             private void interpretResult()
@@ -308,6 +308,8 @@ namespace Ex05.WinFormUI
                     {
                         box.BackColor = Color.Yellow;
                     }
+
+                    counter++;
                 }
             }
 
