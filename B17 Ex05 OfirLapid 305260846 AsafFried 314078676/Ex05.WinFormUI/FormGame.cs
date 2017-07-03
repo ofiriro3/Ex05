@@ -8,7 +8,7 @@ namespace Ex05.WinFormUI
 {
     public class FormGame : Form
     {
-        private Game m_Game;
+        private static Game m_Game;
         private const int k_ColorButtonSpacing = 8;
         FormLogin m_LoginForm = new FormLogin();
         static FormColorChoice m_ColorChoiceForm = new FormColorChoice();
@@ -37,6 +37,7 @@ namespace Ex05.WinFormUI
 
         private void runGame()
         {
+            m_Game = new Game(r_SelectedNumberOfChances);
             const int k_RowLeft = 12;
             const int k_GuessRowTop = 80;
             const int k_SolutionRowTop = 10;
@@ -142,7 +143,7 @@ namespace Ex05.WinFormUI
                 
                 for (int i = 0; i < k_NumberOfColorBoxes; i++)
                     {
-                        Button button = new Button();
+                    Button button = new Button();
                         button.Width = k_ButtonWidth;
                         button.Height = k_ButtonHeight;
                         if (i % 2 == 0)
@@ -198,7 +199,7 @@ namespace Ex05.WinFormUI
                 
                 return controls.ToArray();
             }
-
+            
             bool checkValidGuess()
             {
                 bool validGuess = true;
@@ -222,7 +223,8 @@ namespace Ex05.WinFormUI
 				if (m_ColorChoiceForm.UserChoiceOfColor != null)
 				{
 					(sender as Button).BackColor = m_ColorChoiceForm.UserChoiceOfColor.Value;
-				}
+                    (sender as ColorButton).ValueOfTheGuessInStringFormat = m_ColorChoiceForm.UserChoiceValue.Value;
+                }
 
 				bool validGuess = checkValidGuess();
 
@@ -235,8 +237,42 @@ namespace Ex05.WinFormUI
 
 			void ButtonApply_Click(object sender, EventArgs e)
 			{
-                
+                String guessOfTheUser = CovertColoredButtonsToStringGuessRepresentation();
+                m_Game.PlayTurn(guessOfTheUser);
+                interpretResult();
 			}
+
+            private void interpretResult()
+            {
+                Game.eGuessResult [] gameResult = m_Game.getLastGameResult();
+                int counter = 0;
+                foreach (Button box in m_AnswersBoxes)
+                {
+                    if(gameResult[counter].Equals(Game.eGuessResult.V))
+                    {
+                        box.BackColor = Color.Black;
+                    }
+                    else if (gameResult[counter].Equals(Game.eGuessResult.X))
+                    {
+                        box.BackColor = Color.Yellow;
+                    }
+                }
+            }
+
+            private String CovertColoredButtonsToStringGuessRepresentation()
+            {
+
+                StringBuilder guessOfTheUser = new StringBuilder();
+
+                foreach (ColorButton guessButton in m_ColorButtons)
+                {
+                    guessOfTheUser.Append(guessButton.ValueOfTheGuessInStringFormat);
+                }
+
+                return guessOfTheUser.ToString();
+
+            }
+
         }
     }
 }

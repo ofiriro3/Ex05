@@ -88,7 +88,7 @@ namespace Ex05.BullsEyeLogic
 
         public eGuessResult [] getLastGameResult()
         {
-            int lastTurn = m_NumberOfTotalGuesses - m_NumOfLeftGuesses + 1;
+            int lastTurn = m_NumberOfTotalGuesses - (m_NumOfLeftGuesses + 1);
 
             return m_TurnArray[lastTurn].GuessResults;
         }
@@ -184,13 +184,13 @@ namespace Ex05.BullsEyeLogic
 
         private bool checkValidInputFormat(string i_InputFromUser)
         {
-            bool validFormat = false;
+            bool validFormat = true;
             string inputWithoutSpaces = i_InputFromUser.Replace(" ", string.Empty);
             if (inputWithoutSpaces.Length == 4 )
             {
                 foreach (char currentLetter in inputWithoutSpaces)
                 {
-                    if ((currentLetter < 'A' || currentLetter > 'Z') && (currentLetter != '\b'))
+                    if (currentLetter < 'A' || currentLetter > 'Z')
                     {
                         validFormat = false;
                         break;
@@ -207,7 +207,7 @@ namespace Ex05.BullsEyeLogic
             bool validContext = true;
             foreach (char currentLetter in inputWithoutSpaces)
             {
-                    if (currentLetter < 'A' || currentLetter > 'H')
+                    if (currentLetter < 'A' || currentLetter > 'Z')
                     {
                         validContext = false;
                         break;

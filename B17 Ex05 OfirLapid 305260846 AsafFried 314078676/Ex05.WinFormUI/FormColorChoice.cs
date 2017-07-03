@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
 using System.Windows.Forms;
+using static Ex05.WinFormUI.ColorButton;
 
 namespace Ex05.WinFormUI
 {
@@ -12,6 +13,18 @@ namespace Ex05.WinFormUI
         const int k_NumberOfButtonInARow = 4;
         const int k_NumberOfButtonInAColumn = 2;
         Nullable<Color> m_UserChocieOfColor = null;
+        Nullable<char> m_UserChoiceValue;
+
+
+        public Nullable<char> UserChoiceValue
+        {
+            get
+            {
+                return m_UserChoiceValue;
+            }
+
+
+        }
 
         public Nullable<Color> UserChoiceOfColor
         {
@@ -39,14 +52,11 @@ namespace Ex05.WinFormUI
         */
         private void InitControls()
         {
-            createColoredButton(Color.Purple);
-            createColoredButton(Color.Red);
-            createColoredButton(Color.Green);
-            createColoredButton(Color.AliceBlue);
-            createColoredButton(Color.Blue);
-            createColoredButton(Color.Yellow);
-            createColoredButton(Color.Brown);
-            createColoredButton(Color.White);
+            foreach(eColor color in Enum.GetValues(typeof (eColor)))
+            {
+                createColoredButton(color);
+            }
+
             int xPosition = (this.ClientSize.Width - k_NumberOfButtonInARow * ColorButton.k_Width) / 2;
             int yPosition = (this.ClientSize.Height - k_NumberOfButtonInAColumn * ColorButton.k_Height) / 2;
             int numOfButtonInCurrentRow = 0;
@@ -72,19 +82,20 @@ namespace Ex05.WinFormUI
         private void OnClickColoredButton(Object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.OK;
-            Button button = sender as Button;
+            ColorButton button = sender as ColorButton;
             if( button != null)
             {
                 m_UserChocieOfColor = button.BackColor;
+                m_UserChoiceValue = button.ValueOfTheGuessInStringFormat;
                 this.Close();
             }
             
         }
 
-        private void createColoredButton(Color i_Color)
+        private void createColoredButton(eColor i_Color)
         {
             ColorButton coloredButton = new ColorButton(i_Color);
-            m_ColorButtons.Add(i_Color.ToString(), coloredButton);
+            m_ColorButtons.Add(Enum.GetName(typeof(eColor),i_Color), coloredButton);
         }
     }
 }
