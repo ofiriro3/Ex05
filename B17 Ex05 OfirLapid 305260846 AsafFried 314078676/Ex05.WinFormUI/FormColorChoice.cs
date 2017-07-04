@@ -23,7 +23,6 @@ namespace Ex05.WinFormUI
                 return m_UserChoiceValue;
             }
 
-
         }
 
         public Nullable<Color> UserChoiceOfColor
@@ -32,8 +31,6 @@ namespace Ex05.WinFormUI
             {
                 return m_UserChocieOfColor;
             }
-            
-
         }
         public FormColorChoice()
         {
@@ -44,12 +41,6 @@ namespace Ex05.WinFormUI
             InitControls();
         }
 
-       /* protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-            InitControls();
-        }
-        */
         private void InitControls()
         {
             eColor defaultColor = eColor.Control;
@@ -66,7 +57,7 @@ namespace Ex05.WinFormUI
             int yPosition = (this.ClientSize.Height - k_NumberOfButtonInAColumn * ColorButton.k_Height) / 2;
             int numOfButtonInCurrentRow = 0;
 
-            foreach (Button button in m_ColorButtons.Values)
+            foreach (ColorButton button in m_ColorButtons.Values)
             {
                 this.Controls.Add(button);
                 button.Location = new Point(xPosition, yPosition);

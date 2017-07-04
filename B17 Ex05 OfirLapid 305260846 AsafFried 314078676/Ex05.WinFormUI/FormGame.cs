@@ -42,12 +42,13 @@ namespace Ex05.WinFormUI
             const int k_GuessRowTop = 80;
             const int k_SolutionRowTop = 10;
 
-            SolutionRow solution = new SolutionRow(this, new Point(k_RowLeft, k_SolutionRowTop), 0);
+            SolutionRow solution = new SolutionRow(new Point(k_RowLeft, k_SolutionRowTop), 0);
             this.Controls.AddRange(solution.GetControls());
 
             for (int i = 0; i < r_SelectedNumberOfChances; i ++)
             {
-                GuessRow guess = new GuessRow(this, new Point(k_RowLeft, k_GuessRowTop), i);
+                GuessRow guess = new GuessRow(new Point(k_RowLeft, k_GuessRowTop), i);
+                guess.AfterSuccessfulGuess += FinishGame;
                 m_GameRows.Add(guess);
                 this.Controls.AddRange(guess.GetControls());
             }
@@ -74,13 +75,11 @@ namespace Ex05.WinFormUI
 
 		abstract class Row
 		{
-            protected FormGame m_FormGame;
 			protected const int k_NumberOfColorBoxes = 4;
 			protected List<ColorButton> m_ColorButtons;
 
-            public Row(FormGame io_FormGame ,Point i_Location, int i_PivotTop, Color i_DefualtColorOfColorButtons)
+            public Row(Point i_Location, int i_PivotTop, Color i_DefualtColorOfColorButtons)
 			{
-                m_FormGame = io_FormGame;
 				Point pivotedPoint = new Point(i_Location.X, i_Location.Y + (i_PivotTop * (ColorButton.k_Height + k_ColorButtonSpacing)));
 				createButtons(pivotedPoint, i_DefualtColorOfColorButtons);
 			}
@@ -109,7 +108,7 @@ namespace Ex05.WinFormUI
 
 		class SolutionRow : Row
 		{
-            public SolutionRow(FormGame io_FormGame, Point i_Location, int i_PivotTop) : base(io_FormGame, i_Location, i_PivotTop, Color.Black)
+            public SolutionRow(Point i_Location, int i_PivotTop) : base(i_Location, i_PivotTop, Color.Black)
 			{
                 
 			}
@@ -122,7 +121,8 @@ namespace Ex05.WinFormUI
 
         class GuessRow : Row
         {
-
+            public delegate void CorrectGuessDelegate();
+            public event CorrectGuessDelegate AfterSuccessfulGuess;
             private Button m_ApplyGuessButton;
             private const int k_ApplyButtonXPivot = 10;
             private const int k_ApplyButtonYPivot = 10;
@@ -130,7 +130,7 @@ namespace Ex05.WinFormUI
 			private const int k_AnswerBoxYPivot = 0;
             private List<Button> m_AnswersBoxes;
 
-            public GuessRow(FormGame io_FormGame, Point i_Location, int i_PivotTop) : base(io_FormGame, i_Location, i_PivotTop, Control.DefaultBackColor)
+            public GuessRow(Point i_Location, int i_PivotTop) : base(i_Location, i_PivotTop, Control.DefaultBackColor)
             {
                 int locationY = i_Location.Y + i_PivotTop * (ColorButton.k_Height + k_ColorButtonSpacing);
                 int locationX = k_NumberOfColorBoxes * (ColorButton.k_Width + k_ColorButtonSpacing);
@@ -139,7 +139,6 @@ namespace Ex05.WinFormUI
                 createAnswersBoxes(locationX, locationY);
 
             }
-
 
             private void createAnswersBoxes(int XValue, int YValue)
             {
@@ -259,7 +258,7 @@ namespace Ex05.WinFormUI
                 interpretResult();
                 if (isGameOver())
                 {
-                    m_FormGame.FinishGame();
+                    OnSuccessfulGuess();
                 }
                 else
                 {
@@ -269,6 +268,14 @@ namespace Ex05.WinFormUI
                         button.Enabled = false;
                     }
                 }
+			}
+
+			protected virtual void OnSuccessfulGuess()
+			{
+                if (AfterSuccessfulGuess != null)
+				{
+                    AfterSuccessfulGuess.Invoke();
+		        }
 			}
 
             private bool isGameOver()

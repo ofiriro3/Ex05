@@ -13,7 +13,8 @@ namespace Ex05.WinFormUI
 
         public ColorButton()
         {
-            
+			this.Width = k_Width;
+			this.Height = k_Height; 
         }
 
         public ColorButton(Color i_Color) : base()
