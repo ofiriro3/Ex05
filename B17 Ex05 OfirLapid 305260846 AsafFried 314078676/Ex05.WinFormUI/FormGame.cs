@@ -42,37 +42,45 @@ namespace Ex05.WinFormUI
             const int k_GuessRowTop = 80;
             const int k_SolutionRowTop = 10;
 
-            SolutionRow solution = new SolutionRow(new Point(k_RowLeft, k_SolutionRowTop), 0);
+            SolutionRow solution = new SolutionRow(this, new Point(k_RowLeft, k_SolutionRowTop), 0);
             this.Controls.AddRange(solution.GetControls());
 
             for (int i = 0; i < r_SelectedNumberOfChances; i ++)
             {
-                GuessRow guess = new GuessRow(new Point(k_RowLeft, k_GuessRowTop), i);
+                GuessRow guess = new GuessRow(this, new Point(k_RowLeft, k_GuessRowTop), i);
                 m_GameRows.Add(guess);
                 this.Controls.AddRange(guess.GetControls());
             }
         }
 
+        public void FinishGame()
+		{
+            foreach (Control control in this.Controls)
+            {
+                if(control is Button)
+                {
+                    this.Enabled = false;
+                }
+            }
+
+            //TODO: show solutions in solution row
+		}
+
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
-
-			InitControls();
-		}
-
-		private void InitControls()
-		{
-			//TODO:
 		}
 
 
 		abstract class Row
 		{
+            protected FormGame m_FormGame;
 			protected const int k_NumberOfColorBoxes = 4;
 			protected List<ColorButton> m_ColorButtons;
 
-            public Row(Point i_Location, int i_PivotTop, Color i_DefualtColorOfColorButtons)
+            public Row(FormGame io_FormGame ,Point i_Location, int i_PivotTop, Color i_DefualtColorOfColorButtons)
 			{
+                m_FormGame = io_FormGame;
 				Point pivotedPoint = new Point(i_Location.X, i_Location.Y + (i_PivotTop * (ColorButton.k_Height + k_ColorButtonSpacing)));
 				createButtons(pivotedPoint, i_DefualtColorOfColorButtons);
 			}
@@ -101,7 +109,7 @@ namespace Ex05.WinFormUI
 
 		class SolutionRow : Row
 		{
-            public SolutionRow(Point i_Location, int i_PivotTop) : base(i_Location, i_PivotTop, Color.Black)
+            public SolutionRow(FormGame io_FormGame, Point i_Location, int i_PivotTop) : base(io_FormGame, i_Location, i_PivotTop, Color.Black)
 			{
                 
 			}
@@ -122,7 +130,7 @@ namespace Ex05.WinFormUI
 			private const int k_AnswerBoxYPivot = 0;
             private List<Button> m_AnswersBoxes;
 
-            public GuessRow(Point i_Location, int i_PivotTop) : base(i_Location, i_PivotTop, Color.Gray)
+            public GuessRow(FormGame io_FormGame, Point i_Location, int i_PivotTop) : base(io_FormGame, i_Location, i_PivotTop, Control.DefaultBackColor)
             {
                 int locationY = i_Location.Y + i_PivotTop * (ColorButton.k_Height + k_ColorButtonSpacing);
                 int locationX = k_NumberOfColorBoxes * (ColorButton.k_Width + k_ColorButtonSpacing);
@@ -131,6 +139,7 @@ namespace Ex05.WinFormUI
                 createAnswersBoxes(locationX, locationY);
 
             }
+
 
             private void createAnswersBoxes(int XValue, int YValue)
             {
@@ -173,8 +182,10 @@ namespace Ex05.WinFormUI
 
             protected override ColorButton CreateButton(Color i_Color, Point i_Location, int i_PivotLeft)
             {
-                ColorButton colorButton = base.CreateButton(i_Color, i_Location, i_PivotLeft);
+                GuessColorButton colorButton = new GuessColorButton(i_Color);
 
+				colorButton.Location = i_Location;
+				colorButton.Left += i_PivotLeft * (ColorButton.k_Width + k_ColorButtonSpacing);
                 colorButton.Click += new EventHandler(ButtonColor_Click);
 
                 return colorButton;
@@ -182,7 +193,6 @@ namespace Ex05.WinFormUI
 
             public override Control[] GetControls()
             {
-                //TODO: ADD ALL CONTROLS
                 List<Control> controls = new List<Control>();
 
                 foreach (ColorButton button in m_ColorButtons){
@@ -193,7 +203,6 @@ namespace Ex05.WinFormUI
                 {
                     controls.Add(button);
                 }
-
 
                 controls.Add(m_ApplyGuessButton);
                 
@@ -206,7 +215,7 @@ namespace Ex05.WinFormUI
 
                 foreach(ColorButton button in m_ColorButtons)
                 {
-                    if(button.BackColor.Equals(Color.Gray))
+                    if(button.BackColor.Equals(Control.DefaultBackColor))
                     {
                         validGuess = false;
                         break;
@@ -218,12 +227,16 @@ namespace Ex05.WinFormUI
 
 			void ButtonColor_Click(object sender, EventArgs e)
 			{
+				if ((sender as Button).Enabled == false)
+				{
+					return;
+				}
 
                 m_ColorChoiceForm.ShowDialog();
 				if (m_ColorChoiceForm.UserChoiceOfColor != null)
 				{
 					(sender as Button).BackColor = m_ColorChoiceForm.UserChoiceOfColor.Value;
-                    (sender as ColorButton).ValueOfTheGuessInStringFormat = m_ColorChoiceForm.UserChoiceValue.Value;
+                    (sender as GuessColorButton).ValueOfTheGuessInStringFormat = m_ColorChoiceForm.UserChoiceValue.Value;
                 }
 
 				bool validGuess = checkValidGuess();
@@ -237,10 +250,42 @@ namespace Ex05.WinFormUI
 
 			void ButtonApply_Click(object sender, EventArgs e)
 			{
+                if((sender as Button).Enabled == false)
+                {
+                    return;
+                }
                 String guessOfTheUser = CovertColoredButtonsToStringGuessRepresentation();
                 m_Game.PlayTurn(guessOfTheUser);
                 interpretResult();
+                if (isGameOver())
+                {
+                    m_FormGame.FinishGame();
+                }
+                else
+                {
+                    (sender as Button).Enabled = false;
+                    foreach (Button button in m_ColorButtons)
+                    {
+                        button.Enabled = false;
+                    }
+                }
 			}
+
+            private bool isGameOver()
+            {
+                bool gameOver = true;;
+
+                foreach (Button box in m_AnswersBoxes)
+                {
+                    if(!(box.BackColor == Color.Black))
+                    {
+                        gameOver = false;
+                        break;
+                    }
+                }
+
+                return gameOver;
+            }
 
             private void interpretResult()
             {
@@ -266,11 +311,10 @@ namespace Ex05.WinFormUI
 
                 foreach (ColorButton guessButton in m_ColorButtons)
                 {
-                    guessOfTheUser.Append(guessButton.ValueOfTheGuessInStringFormat);
+                    guessOfTheUser.Append((guessButton as GuessColorButton).ValueOfTheGuessInStringFormat);
                 }
 
                 return guessOfTheUser.ToString();
-
             }
 
         }
