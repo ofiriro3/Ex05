@@ -1,4 +1,4 @@
-﻿﻿using System;
+﻿﻿﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
@@ -38,6 +38,7 @@ namespace Ex05.WinFormUI
 
         private void runGame()
         {
+            const int k_IndexOfFirstRow = 0;
             m_Game = new Game(r_SelectedNumberOfChances);
             const int k_RowLeft = 12;
             const int k_GuessRowTop = 80;
@@ -50,9 +51,27 @@ namespace Ex05.WinFormUI
             for (int i = 0; i < r_SelectedNumberOfChances; i ++)
             {
                 GuessRow guess = new GuessRow(new Point(k_RowLeft, k_GuessRowTop), i);
+                if (i == k_IndexOfFirstRow)
+                {
+                    guess.SetEnableOfRowGuessButtons(true); 
+                }
+
+                else
+                {
+                    guess.SetEnableOfRowGuessButtons(false);
+				}
+
                 guess.AfterSuccessfulGuess += FinishGame;
                 m_GameRows.Add(guess);
                 this.Controls.AddRange(guess.GetControls());
+            }
+
+            for (int i = 0; i < m_GameRows.Count; i++)
+            {
+				if (i < r_SelectedNumberOfChances - 1)
+				{
+                    m_GameRows[i].AfterWrongGuess += EnableGuessRow;
+				}
             }
         }
 
@@ -72,14 +91,18 @@ namespace Ex05.WinFormUI
             {
                 (controls[counter] as ColorButton).BackColor = guess.BackColor;
                 counter++;
-            }
-           
+            } 
 		}
 
 		protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
 		}
+
+        void EnableGuessRow(int i_IndexOfRow)
+        {
+            m_GameRows[i_IndexOfRow].SetEnableOfRowGuessButtons(true);
+        }
 
 
 		abstract class Row
@@ -131,7 +154,10 @@ namespace Ex05.WinFormUI
         class GuessRow : Row
         {
             public delegate void CorrectGuessDelegate(List<ColorButton> i_LastGuess);
+            public delegate void WrongGuessDelegate(int i_IndexOfNextGuessRow);
             public event CorrectGuessDelegate AfterSuccessfulGuess;
+            public event WrongGuessDelegate AfterWrongGuess;
+            private int m_IndexOfRow;
             private Button m_ApplyGuessButton;
             private const int k_ApplyButtonXPivot = 10;
             private const int k_ApplyButtonYPivot = 10;
@@ -139,14 +165,14 @@ namespace Ex05.WinFormUI
 			private const int k_AnswerBoxYPivot = 0;
             private List<Button> m_AnswersBoxes;
 
-            public GuessRow(Point i_Location, int i_PivotTop) : base(i_Location, i_PivotTop, Control.DefaultBackColor)
+            public GuessRow(Point i_Location, int i_Index) : base(i_Location, i_Index, Control.DefaultBackColor)
             {
-                int locationY = i_Location.Y + i_PivotTop * (ColorButton.k_Height + k_ColorButtonSpacing);
+                int locationY = i_Location.Y + i_Index * (ColorButton.k_Height + k_ColorButtonSpacing);
                 int locationX = k_NumberOfColorBoxes * (ColorButton.k_Width + k_ColorButtonSpacing);
+                m_IndexOfRow = i_Index;
 
                 createApplyGuessButton(locationX, locationY);
                 createAnswersBoxes(locationX, locationY);
-
             }
 
             private void createAnswersBoxes(int XValue, int YValue)
@@ -271,12 +297,11 @@ namespace Ex05.WinFormUI
                 }
                 else
                 {
-                    (sender as Button).Enabled = false;
-                    foreach (Button button in m_ColorButtons)
-                    {
-                        button.Enabled = false;
-                    }
+                    SetEnableOfRowGuessButtons(false);
+                    OnWrongGuess();
                 }
+
+                m_ApplyGuessButton.Enabled = false;
 			}
 
 			protected virtual void OnSuccessfulGuess()
@@ -287,11 +312,29 @@ namespace Ex05.WinFormUI
 		        }
 			}
 
+			protected virtual void OnWrongGuess()
+			{
+                int indexOfNextGuessRow = m_IndexOfRow + 1;
+
+				if (AfterWrongGuess != null)
+				{
+                    AfterWrongGuess.Invoke(indexOfNextGuessRow);
+				}
+			}
+
             private bool isWonTheGame()
             {
-                Game.eGameResult gameStatus = m_Game.GameResult;
+                bool wonTheGame = true;
 
-                return (gameStatus.Equals(Game.eGameResult.StillPlaying));
+                foreach (Button box in m_AnswersBoxes)
+                {
+                    if(!(box.BackColor == Color.Black))
+                    {
+                        wonTheGame = false;
+                    }
+                }
+
+                return wonTheGame;
             }
 
             private void interpretResult()
@@ -324,6 +367,14 @@ namespace Ex05.WinFormUI
                 }
 
                 return guessOfTheUser.ToString();
+            }
+
+            public void SetEnableOfRowGuessButtons(bool i_Enable)
+            {
+				foreach (Button button in m_ColorButtons)
+				{
+                    button.Enabled = i_Enable;
+				}
             }
 
         }
