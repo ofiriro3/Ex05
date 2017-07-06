@@ -8,7 +8,6 @@ namespace Ex05.WinFormUI
 {
     public class FormGame : Form
     {
-       
         private Game m_Game;
         private const int k_ColorButtonSpacing = 8;
         private const int k_GameFormWidth = 300;
@@ -49,15 +48,14 @@ namespace Ex05.WinFormUI
         private void runGame()
         {
             const int k_IndexOfFirstRow = 0;
-            m_Game = new Game(m_SelectedNumberOfChances);
             const int k_RowLeft = 12;
             const int k_GuessRowTop = 80;
             const int k_SolutionRowTop = 10;
-
+            m_Game = new Game(m_SelectedNumberOfChances);
             SolutionRow solution = new SolutionRow(new Point(k_RowLeft, k_SolutionRowTop), 0);
+
             m_SolutionRow = solution;
             this.Controls.AddRange(solution.GetControls());
-
             for (int i = 0; i < m_SelectedNumberOfChances; i ++)
             {
                 GuessRow guess = new GuessRow(new Point(k_RowLeft, k_GuessRowTop), i);
@@ -71,11 +69,11 @@ namespace Ex05.WinFormUI
                     guess.SetEnableOfRowGuessButtons(false);
 				}
 
-                guess.AfterSuccessfulGuess += FinishGame;
+                guess.AfterSuccessfulGuess += finishGame;
                 guess.AfterMakeGuess += m_Game.PlayTurn;
                 guess.WhenGetResultGuess += m_Game.getLastGameResult;
-                guess.AfterGuessColorButtonClick += SetGuessButtonFromColorForm;
-                guess.ValidateCorrect += IsWonTheGame;
+                guess.AfterGuessColorButtonClick += setGuessButtonFromColorForm;
+                guess.ValidateCorrect += isWonTheGame;
                 m_GameRows.Add(guess);
                 this.Controls.AddRange(guess.GetControls());
             }
@@ -84,17 +82,17 @@ namespace Ex05.WinFormUI
             {
 				if (i < m_SelectedNumberOfChances - 1)
 				{
-                    m_GameRows[i].AfterWrongGuess += EnableGuessRow;
+                    m_GameRows[i].AfterWrongGuess += enableGuessRow;
 				}
             }
         }
 
-        public bool IsWonTheGame()
+        private bool isWonTheGame()
         {
             return m_Game.GameResult.Equals(Game.eGameResult.Win);
         }
 
-        public void FinishGame(List<ColorButton> lastGuess)
+        private void finishGame(List<ColorButton> lastGuess)
 		{
             foreach (Control control in this.Controls)
             {
@@ -113,11 +111,9 @@ namespace Ex05.WinFormUI
             } 
 		}
 
-
-        public void SetGuessButtonFromColorForm(GuessColorButton sender)
+        private void setGuessButtonFromColorForm(GuessColorButton sender)
         {
             m_ColorChoiceForm.ShowDialog();
-
 			if (m_ColorChoiceForm.UserChoiceOfColor != null && m_ColorChoiceForm.DialogResult == DialogResult.OK)
 			{
                 sender.BackColor = m_ColorChoiceForm.UserChoiceOfColor.Value;
@@ -125,11 +121,10 @@ namespace Ex05.WinFormUI
 			}
         }
 
-        void EnableGuessRow(int i_IndexOfRow)
+        void enableGuessRow(int i_IndexOfRow)
         {
             m_GameRows[i_IndexOfRow].SetEnableOfRowGuessButtons(true);
         }
-
 
 		abstract class Row
 		{
@@ -278,7 +273,7 @@ namespace Ex05.WinFormUI
                 return controls.ToArray();
             }
             
-            bool checkValidGuess()
+            private bool checkValidGuess()
             {
                 bool validGuess = true;
 
@@ -294,7 +289,7 @@ namespace Ex05.WinFormUI
                 return validGuess;
             }
 
-			void ButtonColor_Click(object sender, EventArgs e)
+			private void ButtonColor_Click(object sender, EventArgs e)
 			{
 				if ((sender as Button).Enabled == false)
 				{
@@ -312,15 +307,15 @@ namespace Ex05.WinFormUI
                 {
                     m_ApplyGuessButton.Enabled = true;
                 }
-                 
 			}
 
-			void ButtonApply_Click(object sender, EventArgs e)
+			private void ButtonApply_Click(object sender, EventArgs e)
 			{
                 if((sender as Button).Enabled == false)
                 {
                     return;
                 }
+
                 String guessOfTheUser = CovertColoredButtonsToStringGuessRepresentation();
                 interpretResult(OnGuess(guessOfTheUser));
                 if(ValidateCorrect != null)
@@ -405,7 +400,6 @@ namespace Ex05.WinFormUI
                     button.Enabled = i_Enable;
 				}
             }
-
         }
     }
 }
