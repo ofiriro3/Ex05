@@ -328,12 +328,13 @@ namespace Ex05.WinFormUI
                     if (ValidateCorrect.Invoke())
 					{
 						OnSuccessfulGuess();
-					}   
-                }
-                else
-                {
-                    SetEnableOfRowGuessButtons(false);
-                    OnWrongGuess();
+					}
+
+					else
+					{
+						SetEnableOfRowGuessButtons(false);
+						OnWrongGuess();
+					}
                 }
 
                 m_ApplyGuessButton.Enabled = false;
@@ -365,21 +366,6 @@ namespace Ex05.WinFormUI
                     AfterWrongGuess.Invoke(indexOfNextGuessRow);
 				}
 			}
-
-            private bool isWonTheGame()
-            {
-                bool wonTheGame = true;
-
-                foreach (Button box in m_AnswersBoxes)
-                {
-                    if(!(box.BackColor == Color.Black))
-                    {
-                        wonTheGame = false;
-                    }
-                }
-
-                return wonTheGame;
-            }
 
             private void interpretResult(Game.eGuessResult[] i_GameResult)
             {
