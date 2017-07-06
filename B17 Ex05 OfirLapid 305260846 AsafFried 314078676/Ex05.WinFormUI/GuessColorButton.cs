@@ -17,7 +17,7 @@ namespace Ex05.WinFormUI
 			Yellow = 'F',
 			Brown = 'G',
 			White = 'H',
-			Control = 'a'
+			Control 
 		}
 
 		public GuessColorButton(eColor i_Color): base()

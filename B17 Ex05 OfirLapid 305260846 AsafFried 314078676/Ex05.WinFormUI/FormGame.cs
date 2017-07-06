@@ -81,7 +81,7 @@ namespace Ex05.WinFormUI
             {
                 if(control is Button)
                 {
-                    this.Enabled = false;
+                    control.Enabled = false;
                 }
             }
 
@@ -197,6 +197,7 @@ namespace Ex05.WinFormUI
 
                         button.Location = new Point(locationX, locationY);
                         locationX += button.Width + k_Pivot;
+                        button.Enabled = false;
                         m_AnswersBoxes.Add(button);
                      }
             }
@@ -267,7 +268,7 @@ namespace Ex05.WinFormUI
 				}
 
                 m_ColorChoiceForm.ShowDialog();
-				if (m_ColorChoiceForm.UserChoiceOfColor != null)
+				if (m_ColorChoiceForm.UserChoiceOfColor != null && m_ColorChoiceForm.DialogResult == DialogResult.OK)
 				{
 					(sender as Button).BackColor = m_ColorChoiceForm.UserChoiceOfColor.Value;
                     (sender as GuessColorButton).ValueOfTheGuessInStringFormat = m_ColorChoiceForm.UserChoiceValue.Value;
