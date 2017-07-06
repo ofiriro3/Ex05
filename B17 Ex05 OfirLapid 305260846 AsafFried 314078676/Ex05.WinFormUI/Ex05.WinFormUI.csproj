@@ -54,6 +54,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="GuessColorButton.cs" />
+    <Compile Include="Row.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
