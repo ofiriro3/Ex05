@@ -50,14 +50,10 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Program.cs" />
-<<<<<<< HEAD
     <Compile Include="GuessColorButton.cs">
       <SubType>Component</SubType>
     </Compile>
-=======
-    <Compile Include="GuessColorButton.cs" />
     <Compile Include="Row.cs" />
->>>>>>> 944a24d80a89469bb326cccde4d006acc5900506
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />
