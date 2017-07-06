@@ -12,8 +12,8 @@ namespace Ex05.WinFormUI
         private const int k_GameFormWidth = 300;
 		private const int k_GameFormInitialHeight = 125;
 		private const int k_GameFormRowHeight = 47;
-		private FormLogin m_LoginForm = new FormLogin();
-        private FormColorChoice m_ColorChoiceForm = new FormColorChoice();
+        private FormLogin m_LoginForm;
+        private FormColorChoice m_ColorChoiceForm;
         private List<GuessRow> m_GameRows;
         private int m_SelectedNumberOfChances;
         private SolutionRow m_SolutionRow; 
@@ -24,6 +24,8 @@ namespace Ex05.WinFormUI
 			this.StartPosition = FormStartPosition.CenterScreen;
 			this.MaximizeBox = false;
 			this.Text = "Bool Pgia";
+            m_LoginForm = new FormLogin();
+            m_ColorChoiceForm = new FormColorChoice();
         }
 
 		protected override void OnLoad(EventArgs e)
@@ -56,35 +58,33 @@ namespace Ex05.WinFormUI
             m_SolutionRow = solution;
             m_SolutionRow.SetEnableOfColorButtons(false);
             this.Controls.AddRange(solution.GetControls());
-            for (int i = 0; i < m_SelectedNumberOfChances; i ++)
+            for (int i = 0; i < m_SelectedNumberOfChances; i++)
             {
                 GuessRow guess = new GuessRow(new Point(k_RowLeft, k_GuessRowTop), i);
-                if (i == k_IndexOfFirstRow)
-                {
-                    guess.SetEnableOfColorButtons(true); 
-                }
-
-                else
-                {
-                    guess.SetEnableOfColorButtons(false);
-				}
-
-                guess.AfterSuccessfulGuess += finishGame;
-                guess.AfterMakeGuess += m_Game.PlayTurn;
-                guess.WhenGetResultGuess += m_Game.getLastGameResult;
-                guess.AfterGuessColorButtonClick += setGuessButtonFromColorForm;
-                guess.ValidateCorrect += isWonTheGame;
+                makeGuessRowForTheGame(guess, i, k_IndexOfFirstRow);
                 m_GameRows.Add(guess);
                 this.Controls.AddRange(guess.GetControls());
             }
+        }
 
-            for (int i = 0; i < m_GameRows.Count; i++)
+        private void makeGuessRowForTheGame(GuessRow guess , int i_indexOfTheRow, int i_indexOfFirstRow)
+        {
+            if (i_indexOfTheRow == i_indexOfFirstRow)
             {
-				if (i < m_SelectedNumberOfChances - 1)
-				{
-                    m_GameRows[i].AfterWrongGuess += enableGuessRow;
-				}
+                guess.SetEnableOfColorButtons(true);
             }
+
+            else
+            {
+                guess.SetEnableOfColorButtons(false);
+            }
+
+            guess.AfterSuccessfulGuess += finishGame;
+            guess.AfterMakeGuess += m_Game.PlayTurn;
+            guess.WhenGetResultGuess += m_Game.getLastGameResult;
+            guess.AfterGuessColorButtonClick += setGuessButtonFromColorForm;
+            guess.ValidateCorrect += isWonTheGame;
+            guess.AfterWrongGuess += enableGuessRow;
         }
 
         private bool isWonTheGame()
@@ -102,14 +102,19 @@ namespace Ex05.WinFormUI
                 }
             }
 
+            showSoultionRow(lastGuess);
+		}
+
+        private void showSoultionRow(List<ColorButton> lastGuess)
+        {
             int counter = 0;
             Control[] controls = m_SolutionRow.GetControls();
-            foreach(ColorButton guess in lastGuess)
+            foreach (ColorButton guess in lastGuess)
             {
                 (controls[counter] as ColorButton).BackColor = guess.BackColor;
                 counter++;
-            } 
-		}
+            }
+        }
 
         private void setGuessButtonFromColorForm(GuessColorButton sender)
         {
