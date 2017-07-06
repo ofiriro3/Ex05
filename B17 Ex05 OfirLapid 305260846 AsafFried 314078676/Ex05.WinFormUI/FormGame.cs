@@ -14,7 +14,7 @@ namespace Ex05.WinFormUI
         private FormLogin m_LoginForm = new FormLogin();
         private FormColorChoice m_ColorChoiceForm = new FormColorChoice();
         private List<GuessRow> m_GameRows;
-        private readonly int r_SelectedNumberOfChances;
+        private int m_SelectedNumberOfChances;
         private SolutionRow m_SolutionRow; 
 
         public FormGame()
@@ -23,24 +23,30 @@ namespace Ex05.WinFormUI
 			this.StartPosition = FormStartPosition.CenterScreen;
 			this.MaximizeBox = false;
 			this.Text = "Bool Pgia";
+        }
+
+		protected override void OnLoad(EventArgs e)
+		{
+			base.OnLoad(e);
+
 			if (m_LoginForm.ShowDialog() != DialogResult.OK)
 			{
 				this.Close();
 			}
 
-            else
-            {
-                r_SelectedNumberOfChances = m_LoginForm.SelectedNumberOfChances;
-                this.Size = new Size(300, 200 + 40 * r_SelectedNumberOfChances);
-                m_GameRows = new List<GuessRow>(r_SelectedNumberOfChances);
+			else
+			{
+				m_SelectedNumberOfChances = m_LoginForm.SelectedNumberOfChances;
+				this.Size = new Size(300, 200 + 40 * m_SelectedNumberOfChances);
+				m_GameRows = new List<GuessRow>(m_SelectedNumberOfChances);
 				runGame();
 			}
-        }
+		}
 
         private void runGame()
         {
             const int k_IndexOfFirstRow = 0;
-            m_Game = new Game(r_SelectedNumberOfChances);
+            m_Game = new Game(m_SelectedNumberOfChances);
             const int k_RowLeft = 12;
             const int k_GuessRowTop = 80;
             const int k_SolutionRowTop = 10;
@@ -49,7 +55,7 @@ namespace Ex05.WinFormUI
             m_SolutionRow = solution;
             this.Controls.AddRange(solution.GetControls());
 
-            for (int i = 0; i < r_SelectedNumberOfChances; i ++)
+            for (int i = 0; i < m_SelectedNumberOfChances; i ++)
             {
                 GuessRow guess = new GuessRow(new Point(k_RowLeft, k_GuessRowTop), i);
                 if (i == k_IndexOfFirstRow)
@@ -72,7 +78,7 @@ namespace Ex05.WinFormUI
 
             for (int i = 0; i < m_GameRows.Count; i++)
             {
-				if (i < r_SelectedNumberOfChances - 1)
+				if (i < m_SelectedNumberOfChances - 1)
 				{
                     m_GameRows[i].AfterWrongGuess += EnableGuessRow;
 				}
@@ -109,11 +115,6 @@ namespace Ex05.WinFormUI
                 sender.ValueOfTheGuessInStringFormat = m_ColorChoiceForm.UserChoiceValue.Value;
 			}
         }
-
-		protected override void OnLoad(EventArgs e)
-		{
-			base.OnLoad(e);
-		}
 
         void EnableGuessRow(int i_IndexOfRow)
         {
