@@ -9,12 +9,11 @@ namespace Ex05.WinFormUI
 {
     public class FormColorChoice : Form
     {
-        Dictionary<String, GuessColorButton> m_ColorButtons;
-        const int k_NumberOfButtonInARow = 4;
-        const int k_NumberOfButtonInAColumn = 2;
-        Nullable<Color> m_UserChocieOfColor = null;
-        Nullable<char> m_UserChoiceValue;
-
+        private const int k_NumberOfButtonInARow = 4;
+        private const int k_NumberOfButtonInAColumn = 2;
+        private Dictionary<string, GuessColorButton> m_ColorButtons;
+        private Nullable<Color> m_UserChocieOfColor;
+        private Nullable<char> m_UserChoiceValue;
 
         public Nullable<char> UserChoiceValue
         {
@@ -22,7 +21,6 @@ namespace Ex05.WinFormUI
             {
                 return m_UserChoiceValue;
             }
-
         }
 
         public Nullable<Color> UserChoiceOfColor
@@ -32,6 +30,7 @@ namespace Ex05.WinFormUI
                 return m_UserChocieOfColor;
             }
         }
+
         public FormColorChoice()
         {
             this.Text = "Pick A Color:";
@@ -45,16 +44,16 @@ namespace Ex05.WinFormUI
         {
             eColor defaultColor = eColor.Control;
 
-            foreach(eColor color in Enum.GetValues(typeof (eColor)))
+            foreach(eColor color in Enum.GetValues(typeof(eColor)))
             {
-                if (!color.Equals(defaultColor))
+                if(!color.Equals(defaultColor))
                 {
                     createGuessColoredButton(color);
                 }
             }
 
-            int xPosition = (this.ClientSize.Width - k_NumberOfButtonInARow * ColorButton.k_Width) / 2;
-            int yPosition = (this.ClientSize.Height - k_NumberOfButtonInAColumn * ColorButton.k_Height) / 2;
+            int xPosition = ((this.ClientSize.Width - (k_NumberOfButtonInARow * ColorButton.k_Width)) / 2);
+            int yPosition = (this.ClientSize.Height - (k_NumberOfButtonInAColumn * ColorButton.k_Height)) / 2;
             int numOfButtonInCurrentRow = 0;
 
             foreach (ColorButton button in m_ColorButtons.Values)

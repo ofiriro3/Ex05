@@ -30,34 +30,8 @@ namespace Ex05.BullsEyeLogic
         {
             public static eGuessLetter ConvertCharToEGuessLetter(char i_Letter)
             {
-                eGuessLetter theConvertedLetter = eGuessLetter.A;
-                switch (i_Letter)
-                {
-                    case 'A': theConvertedLetter = eGuessLetter.A;
-                        break;
-                    case 'B':
-                        theConvertedLetter = eGuessLetter.B;
-                        break;
-                    case 'C':
-                        theConvertedLetter = eGuessLetter.C;
-                        break;
-                    case 'D':
-                        theConvertedLetter = eGuessLetter.D;
-                        break;
-                    case 'E':
-                        theConvertedLetter = eGuessLetter.E;
-                        break;
-                    case 'F':
-                        theConvertedLetter = eGuessLetter.F;
-                        break;
-                    case 'G':
-                        theConvertedLetter = eGuessLetter.G;
-                        break;
-                    case 'H':
-                        theConvertedLetter = eGuessLetter.H;
-                        break;
-                }
-
+                eGuessLetter theConvertedLetter = (eGuessLetter)Enum.Parse(typeof(eGuessLetter), i_Letter.ToString());
+                
                 return theConvertedLetter;
             }
         }
@@ -75,14 +49,6 @@ namespace Ex05.BullsEyeLogic
             Loss,
             Abort,
             StillPlaying
-        }
-
-        public Turn[] TurnsResult
-        {
-           get
-           {
-                return m_TurnArray;
-           }
         }
 
         public eGuessResult[] getLastGameResult()

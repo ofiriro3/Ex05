@@ -34,9 +34,6 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ApplyButton.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="ColorButton.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -53,7 +50,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="Program.cs" />
-    <Compile Include="GuessColorButton.cs" />
+    <Compile Include="GuessColorButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System" />

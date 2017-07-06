@@ -22,7 +22,6 @@ namespace Ex05.WinFormUI
             this.BackColor = i_Color;
             this.Width = k_Width;
             this.Height = k_Height;
-        }
-        
+        }     
     }
 }
