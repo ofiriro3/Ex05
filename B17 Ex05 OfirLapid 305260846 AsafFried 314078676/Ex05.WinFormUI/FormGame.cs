@@ -11,7 +11,10 @@ namespace Ex05.WinFormUI
        
         private Game m_Game;
         private const int k_ColorButtonSpacing = 8;
-        private FormLogin m_LoginForm = new FormLogin();
+        private const int k_GameFormWidth = 300;
+		private const int k_GameFormInitialHeight = 125;
+		private const int k_GameFormRowHeight = 47;
+		private FormLogin m_LoginForm = new FormLogin();
         private FormColorChoice m_ColorChoiceForm = new FormColorChoice();
         private List<GuessRow> m_GameRows;
         private int m_SelectedNumberOfChances;
@@ -37,7 +40,7 @@ namespace Ex05.WinFormUI
 			else
 			{
 				m_SelectedNumberOfChances = m_LoginForm.SelectedNumberOfChances;
-				this.Size = new Size(300, 200 + 40 * m_SelectedNumberOfChances);
+                this.Size = new Size(k_GameFormWidth, k_GameFormInitialHeight + k_GameFormRowHeight * m_SelectedNumberOfChances);
 				m_GameRows = new List<GuessRow>(m_SelectedNumberOfChances);
 				runGame();
 			}
@@ -70,8 +73,9 @@ namespace Ex05.WinFormUI
 
                 guess.AfterSuccessfulGuess += FinishGame;
                 guess.AfterMakeGuess += m_Game.PlayTurn;
-                guess.AfterGetResultGuess += m_Game.getLastGameResult;
+                guess.WhenGetResultGuess += m_Game.getLastGameResult;
                 guess.AfterGuessColorButtonClick += SetGuessButtonFromColorForm;
+                guess.ValidateCorrect += IsWonTheGame;
                 m_GameRows.Add(guess);
                 this.Controls.AddRange(guess.GetControls());
             }
@@ -83,6 +87,11 @@ namespace Ex05.WinFormUI
                     m_GameRows[i].AfterWrongGuess += EnableGuessRow;
 				}
             }
+        }
+
+        public bool IsWonTheGame()
+        {
+            return m_Game.GameResult.Equals(Game.eGameResult.Win);
         }
 
         public void FinishGame(List<ColorButton> lastGuess)
@@ -174,17 +183,19 @@ namespace Ex05.WinFormUI
             public delegate void WrongGuessDelegate(int i_IndexOfNextGuessRow);
             public delegate void MakeGuessDelegate(string i_GuessOfTheUser);
 			public delegate Game.eGuessResult[] GetResultGuessDelegate();
+            public delegate bool CheckIfCorrectGuessDelegate();
             public delegate void GuessColorButtonClickDelegate(GuessColorButton sender);
+            public event CheckIfCorrectGuessDelegate ValidateCorrect;
             public event GuessColorButtonClickDelegate AfterGuessColorButtonClick;
             public event MakeGuessDelegate AfterMakeGuess;
-			public event GetResultGuessDelegate AfterGetResultGuess;
+			public event GetResultGuessDelegate WhenGetResultGuess;
             public event CorrectGuessDelegate AfterSuccessfulGuess;
             public event WrongGuessDelegate AfterWrongGuess;
             private int m_IndexOfRow;
             private Button m_ApplyGuessButton;
             private const int k_ApplyButtonXPivot = 10;
             private const int k_ApplyButtonYPivot = 10;
-			private const int k_AnswerBoxXPivot = 60; //TODO : USE CONST
+			private const int k_AnswerBoxXPivot = 60;
 			private const int k_AnswerBoxYPivot = 0;
             private List<Button> m_AnswersBoxes;
 
@@ -228,7 +239,7 @@ namespace Ex05.WinFormUI
             private void createApplyGuessButton(int XValue, int YValue)
             {
                 m_ApplyGuessButton = new Button();
-				m_ApplyGuessButton.Width = 40; //TODO : ADD const
+				m_ApplyGuessButton.Width = 40;
 				m_ApplyGuessButton.Height = 20;
 				m_ApplyGuessButton.Text = "-->>";
                 int locationY = YValue + k_ApplyButtonYPivot;
@@ -312,9 +323,12 @@ namespace Ex05.WinFormUI
                 }
                 String guessOfTheUser = CovertColoredButtonsToStringGuessRepresentation();
                 interpretResult(OnGuess(guessOfTheUser));
-                if (isWonTheGame())
+                if(ValidateCorrect != null)
                 {
-                    OnSuccessfulGuess();
+                    if (ValidateCorrect.Invoke())
+					{
+						OnSuccessfulGuess();
+					}   
                 }
                 else
                 {
@@ -331,7 +345,7 @@ namespace Ex05.WinFormUI
 				{
                     AfterMakeGuess.Invoke(i_GuessOfTheUser);
 				}
-                return AfterGetResultGuess.Invoke();
+                return WhenGetResultGuess.Invoke();
             }
 
 			protected virtual void OnSuccessfulGuess()
