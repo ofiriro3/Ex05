@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Text;
 
-
 namespace Ex05.BullsEyeLogic
 {
     public class Game
@@ -78,7 +77,7 @@ namespace Ex05.BullsEyeLogic
             StillPlaying
         }
 
-        public Turn []  TurnsResult
+        public Turn[] TurnsResult
         {
            get
            {
@@ -86,7 +85,7 @@ namespace Ex05.BullsEyeLogic
            }
         }
 
-        public eGuessResult [] getLastGameResult()
+        public eGuessResult[] getLastGameResult()
         {
             int lastTurn = m_NumberOfTotalGuesses - (m_NumOfLeftGuesses + 1);
 
@@ -95,7 +94,7 @@ namespace Ex05.BullsEyeLogic
 
         public Game(int i_NumberOfGuess)
         {
-            if(! validGuessNumber(i_NumberOfGuess))
+            if(!validGuessNumber(i_NumberOfGuess))
             {
                 throw new ArgumentException();
             }
@@ -133,7 +132,6 @@ namespace Ex05.BullsEyeLogic
 
         public void PlayTurn(string i_GuessFromUser)
         {
-
             if (m_NumOfLeftGuesses <= 0)
             {
                 m_GameResult = eGameResult.Loss;
@@ -175,9 +173,9 @@ namespace Ex05.BullsEyeLogic
             return guessArray;
         }
 
-        private bool VerifyInputFromUser(String i_InputFromUser)
+        private bool VerifyInputFromUser(string i_InputFromUser)
         {
-               bool isValidInputFromUser =  checkValidInputContext(i_InputFromUser) && checkValidInputFormat(i_InputFromUser);
+               bool isValidInputFromUser = checkValidInputContext(i_InputFromUser) && checkValidInputFormat(i_InputFromUser);
 
                return isValidInputFromUser;
         }
