@@ -21,7 +21,7 @@ namespace Ex05.WinFormUI
 			Control 
 		}
 
-		public GuessColorButton(eColor i_Color) : base()
+		public GuessColorButton(eColor i_Color): base()
         {
 			this.BackColor = Color.FromName(Enum.GetName(typeof(eColor), i_Color));
 			this.m_ValueOfTheGuessInCharFormat = (char)i_Color;

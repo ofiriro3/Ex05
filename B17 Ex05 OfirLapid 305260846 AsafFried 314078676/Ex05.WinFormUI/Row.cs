@@ -11,6 +11,14 @@ namespace Ex05.WinFormUI
 		protected const int k_NumberOfColorBoxes = 4;
 		protected List<ColorButton> m_ColorButtons;
 
+        public List<ColorButton> ColorButtons
+        {
+            get
+            {
+                return m_ColorButtons;
+            }
+        }
+
 		public Row(Point i_Location, int i_PivotTop, Color i_DefualtColorOfColorButtons)
 		{
 			Point pivotedPoint = new Point(i_Location.X, i_Location.Y + (i_PivotTop * (ColorButton.k_Height + k_ColorButtonSpacing)));

@@ -26,9 +26,10 @@ namespace Ex05.WinFormUI
 			this.Text = "Bool Pgia";
             m_LoginForm = new FormLogin();
             m_ColorChoiceForm = new FormColorChoice();
+
         }
 
-		protected override void OnLoad(EventArgs e)
+        protected override void OnLoad(EventArgs e)
 		{
 			base.OnLoad(e);
 
@@ -79,17 +80,28 @@ namespace Ex05.WinFormUI
                 guess.SetEnableOfColorButtons(false);
             }
 
-            guess.AfterSuccessfulGuess += finishGame;
-            guess.AfterMakeGuess += m_Game.PlayTurn;
-            guess.WhenGetResultGuess += m_Game.getLastGameResult;
+            guess.AfterMakeGuess += doWhenApplyButtonIsClicked;
             guess.AfterGuessColorButtonClick += setGuessButtonFromColorForm;
-            guess.ValidateCorrect += isWonTheGame;
-            guess.AfterWrongGuess += enableGuessRow;
         }
 
-        private bool isWonTheGame()
+        private void doWhenApplyButtonIsClicked(string i_Guess, GuessRow io_GuessRow)
         {
-            return m_Game.GameResult.Equals(Game.eGameResult.Win);
+            m_Game.PlayTurn(i_Guess);
+            Game.eGuessResult[] resultOfTheCurrentTurn = m_Game.getLastGameResult();
+            Game.eGameResult gameResult = m_Game.GameResult;
+            io_GuessRow.interpretResult(resultOfTheCurrentTurn);
+
+            if (gameResult.Equals(Game.eGameResult.Win))
+            {
+                finishGame(io_GuessRow.ColorButtons);
+            }
+            else if(gameResult.Equals(Game.eGameResult.StillPlaying))
+            {
+                m_GameRows[io_GuessRow.IndexOfRow + 1].SetEnableOfColorButtons(true);
+               
+            }
+
+            io_GuessRow.SetEnableOfColorButtons(false);
         }
 
         private void finishGame(List<ColorButton> lastGuess)
@@ -146,25 +158,25 @@ namespace Ex05.WinFormUI
 
         private class GuessRow : Row
         {
-            public delegate void CorrectGuessDelegate(List<ColorButton> i_LastGuess);
-            public delegate void WrongGuessDelegate(int i_IndexOfNextGuessRow);
-            public delegate void MakeGuessDelegate(string i_GuessOfTheUser);
-			public delegate Game.eGuessResult[] GetResultGuessDelegate();
-            public delegate bool CheckIfCorrectGuessDelegate();
-            public delegate void GuessColorButtonClickDelegate(GuessColorButton sender);
-            public event CheckIfCorrectGuessDelegate ValidateCorrect;
+            public delegate void MakeGuessDelegate(string i_GuessOfTheUser, GuessRow i_GuessRow);
+			public delegate void GuessColorButtonClickDelegate(GuessColorButton sender);
             public event GuessColorButtonClickDelegate AfterGuessColorButtonClick;
             public event MakeGuessDelegate AfterMakeGuess;
-			public event GetResultGuessDelegate WhenGetResultGuess;
-            public event CorrectGuessDelegate AfterSuccessfulGuess;
-            public event WrongGuessDelegate AfterWrongGuess;
-            private int m_IndexOfRow;
+			private int m_IndexOfRow;
             private Button m_ApplyGuessButton;
             private const int k_ApplyButtonXPivot = 10;
             private const int k_ApplyButtonYPivot = 10;
 			private const int k_AnswerBoxXPivot = 60;
 			private const int k_AnswerBoxYPivot = 0;
             private List<Button> m_AnswersBoxes;
+
+            public int IndexOfRow
+            {
+                get
+                {
+                    return m_IndexOfRow;
+                }
+            }
 
             public GuessRow(Point i_Location, int i_Index) : base(i_Location, i_Index, Control.DefaultBackColor)
             {
@@ -263,11 +275,7 @@ namespace Ex05.WinFormUI
 
 			private void ButtonColor_Click(object sender, EventArgs e)
 			{
-				if ((sender as Button).Enabled == false)
-				{
-					return;
-				}
-
+				
                 if (AfterGuessColorButtonClick != null)
 				{
                     AfterGuessColorButtonClick.Invoke(sender as GuessColorButton);
@@ -282,59 +290,17 @@ namespace Ex05.WinFormUI
 			}
 
 			private void ButtonApply_Click(object sender, EventArgs e)
-			{
-                if((sender as Button).Enabled == false)
-                {
-                    return;
-                }
-
+			{                
                 String guessOfTheUser = CovertColoredButtonsToStringGuessRepresentation();
-                interpretResult(OnGuess(guessOfTheUser));
-                if(ValidateCorrect != null)
+                if(AfterGuessColorButtonClick != null)
                 {
-                    if (ValidateCorrect.Invoke())
-					{
-						OnSuccessfulGuess();
-					}
-
-					else
-					{
-						SetEnableOfColorButtons(false);
-						OnWrongGuess();
-					}
+                    AfterMakeGuess.Invoke(guessOfTheUser, this);
                 }
 
                 m_ApplyGuessButton.Enabled = false;
 			}
 
-            protected virtual Game.eGuessResult[] OnGuess(string i_GuessOfTheUser)
-            {
-                if (AfterMakeGuess != null)
-				{
-                    AfterMakeGuess.Invoke(i_GuessOfTheUser);
-				}
-                return WhenGetResultGuess.Invoke();
-            }
-
-			protected virtual void OnSuccessfulGuess()
-			{
-                if (AfterSuccessfulGuess != null)
-				{
-                    AfterSuccessfulGuess.Invoke(m_ColorButtons);
-		        }
-			}
-
-			protected virtual void OnWrongGuess()
-			{
-                int indexOfNextGuessRow = m_IndexOfRow + 1;
-
-				if (AfterWrongGuess != null)
-				{
-                    AfterWrongGuess.Invoke(indexOfNextGuessRow);
-				}
-			}
-
-            private void interpretResult(Game.eGuessResult[] i_GameResult)
+            public void interpretResult(Game.eGuessResult[] i_GameResult)
             {
                 int counter = 0;
                 foreach (Button box in m_AnswersBoxes)
