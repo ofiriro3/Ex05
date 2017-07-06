@@ -1,4 +1,4 @@
-﻿﻿﻿using System;
+﻿﻿﻿﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
@@ -9,10 +9,10 @@ namespace Ex05.WinFormUI
     public class FormGame : Form
     {
        
-        private static Game m_Game;
+        private Game m_Game;
         private const int k_ColorButtonSpacing = 8;
         private FormLogin m_LoginForm = new FormLogin();
-        static FormColorChoice m_ColorChoiceForm = new FormColorChoice();
+        private FormColorChoice m_ColorChoiceForm = new FormColorChoice();
         private List<GuessRow> m_GameRows;
         private readonly int r_SelectedNumberOfChances;
         private SolutionRow m_SolutionRow; 
@@ -63,6 +63,9 @@ namespace Ex05.WinFormUI
 				}
 
                 guess.AfterSuccessfulGuess += FinishGame;
+                guess.AfterMakeGuess += m_Game.PlayTurn;
+                guess.AfterGetResultGuess += m_Game.getLastGameResult;
+                guess.AfterGuessColorButtonClick += SetGuessButtonFromColorForm;
                 m_GameRows.Add(guess);
                 this.Controls.AddRange(guess.GetControls());
             }
@@ -94,6 +97,18 @@ namespace Ex05.WinFormUI
                 counter++;
             } 
 		}
+
+
+        public void SetGuessButtonFromColorForm(GuessColorButton sender)
+        {
+            m_ColorChoiceForm.ShowDialog();
+
+			if (m_ColorChoiceForm.UserChoiceOfColor != null && m_ColorChoiceForm.DialogResult == DialogResult.OK)
+			{
+                sender.BackColor = m_ColorChoiceForm.UserChoiceOfColor.Value;
+                sender.ValueOfTheGuessInStringFormat = m_ColorChoiceForm.UserChoiceValue.Value;
+			}
+        }
 
 		protected override void OnLoad(EventArgs e)
 		{
@@ -156,6 +171,12 @@ namespace Ex05.WinFormUI
         {
             public delegate void CorrectGuessDelegate(List<ColorButton> i_LastGuess);
             public delegate void WrongGuessDelegate(int i_IndexOfNextGuessRow);
+            public delegate void MakeGuessDelegate(string i_GuessOfTheUser);
+			public delegate Game.eGuessResult[] GetResultGuessDelegate();
+            public delegate void GuessColorButtonClickDelegate(GuessColorButton sender);
+            public event GuessColorButtonClickDelegate AfterGuessColorButtonClick;
+            public event MakeGuessDelegate AfterMakeGuess;
+			public event GetResultGuessDelegate AfterGetResultGuess;
             public event CorrectGuessDelegate AfterSuccessfulGuess;
             public event WrongGuessDelegate AfterWrongGuess;
             private int m_IndexOfRow;
@@ -268,12 +289,10 @@ namespace Ex05.WinFormUI
 					return;
 				}
 
-                m_ColorChoiceForm.ShowDialog();
-				if (m_ColorChoiceForm.UserChoiceOfColor != null && m_ColorChoiceForm.DialogResult == DialogResult.OK)
+                if (AfterGuessColorButtonClick != null)
 				{
-					(sender as Button).BackColor = m_ColorChoiceForm.UserChoiceOfColor.Value;
-                    (sender as GuessColorButton).ValueOfTheGuessInStringFormat = m_ColorChoiceForm.UserChoiceValue.Value;
-                }
+                    AfterGuessColorButtonClick.Invoke(sender as GuessColorButton);
+				}
 
 				bool validGuess = checkValidGuess();
 
@@ -291,8 +310,7 @@ namespace Ex05.WinFormUI
                     return;
                 }
                 String guessOfTheUser = CovertColoredButtonsToStringGuessRepresentation();
-                m_Game.PlayTurn(guessOfTheUser);
-                interpretResult();
+                interpretResult(OnGuess(guessOfTheUser));
                 if (isWonTheGame())
                 {
                     OnSuccessfulGuess();
@@ -305,6 +323,15 @@ namespace Ex05.WinFormUI
 
                 m_ApplyGuessButton.Enabled = false;
 			}
+
+            protected virtual Game.eGuessResult[] OnGuess(string i_GuessOfTheUser)
+            {
+                if (AfterMakeGuess != null)
+				{
+                    AfterMakeGuess.Invoke(i_GuessOfTheUser);
+				}
+                return AfterGetResultGuess.Invoke();
+            }
 
 			protected virtual void OnSuccessfulGuess()
 			{
@@ -339,17 +366,16 @@ namespace Ex05.WinFormUI
                 return wonTheGame;
             }
 
-            private void interpretResult()
+            private void interpretResult(Game.eGuessResult[] i_GameResult)
             {
-                Game.eGuessResult [] gameResult = m_Game.getLastGameResult();
                 int counter = 0;
                 foreach (Button box in m_AnswersBoxes)
                 {
-                    if(gameResult[counter].Equals(Game.eGuessResult.V))
+                    if(i_GameResult[counter].Equals(Game.eGuessResult.V))
                     {
                         box.BackColor = Color.Black;
                     }
-                    else if (gameResult[counter].Equals(Game.eGuessResult.X))
+                    else if (i_GameResult[counter].Equals(Game.eGuessResult.X))
                     {
                         box.BackColor = Color.Yellow;
                     }
