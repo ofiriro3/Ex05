@@ -27,8 +27,8 @@ namespace Ex05.WinFormUI
             applyButton.Text = "-->>";
             applyButton.Location = new Point(30, 20);
             this.Controls.Add(applyButton);
-
         }
+
         private void createFourSquare()
         {
             List<Control> squaredButtons = new List<Control>();
@@ -39,7 +39,7 @@ namespace Ex05.WinFormUI
                 Button button = new Button();
                 button.Width = 15;
                 button.Height = 15;
-                if( i % 2 == 0)
+                if(i % 2 == 0)
                 {
                     x = 50;
                     y += button.Height + 3;
@@ -50,8 +50,6 @@ namespace Ex05.WinFormUI
                 squaredButtons.Add(button);
                 this.Controls.Add(button);
             }
-           
-
         }
     }
 }

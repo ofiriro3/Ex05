@@ -2,9 +2,10 @@
 using System.Collections.Generic;
 using System.Windows.Forms;
 using System.Drawing;
+
 namespace Ex05.WinFormUI
 {
-	abstract class Row
+	public abstract class Row
 	{
         protected const int k_ColorButtonSpacing = 8;
 		protected const int k_NumberOfColorBoxes = 4;

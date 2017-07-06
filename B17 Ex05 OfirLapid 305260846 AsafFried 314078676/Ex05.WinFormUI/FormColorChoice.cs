@@ -52,7 +52,7 @@ namespace Ex05.WinFormUI
                 }
             }
 
-            int xPosition = ((this.ClientSize.Width - (k_NumberOfButtonInARow * ColorButton.k_Width)) / 2);
+            int xPosition = (this.ClientSize.Width - (k_NumberOfButtonInARow * ColorButton.k_Width)) / 2;
             int yPosition = (this.ClientSize.Height - (k_NumberOfButtonInAColumn * ColorButton.k_Height)) / 2;
             int numOfButtonInCurrentRow = 0;
 
@@ -66,15 +66,14 @@ namespace Ex05.WinFormUI
 
                 if (numOfButtonInCurrentRow >= k_NumberOfButtonInARow)
                 {
-                    xPosition = (this.ClientSize.Width - k_NumberOfButtonInARow * 40) / 2; ;
+                    xPosition = (this.ClientSize.Width - (k_NumberOfButtonInARow * 40)) / 2;
                     yPosition += button.Height + 2;
                     numOfButtonInCurrentRow = 0;
-                }
-                
+                }   
             }
         }
 
-        private void OnClickColoredButton(Object sender, EventArgs e)
+        private void OnClickColoredButton(object sender, EventArgs e)
         {
             this.DialogResult = DialogResult.OK;
             GuessColorButton button = sender as GuessColorButton;
@@ -83,14 +82,13 @@ namespace Ex05.WinFormUI
                 m_UserChocieOfColor = button.BackColor;
                 m_UserChoiceValue = button.ValueOfTheGuessInStringFormat;
                 this.Close();
-            }
-            
+            } 
         }
 
         private void createGuessColoredButton(eColor i_Color)
         {
             GuessColorButton coloredButton = new GuessColorButton(i_Color);
-            m_ColorButtons.Add(Enum.GetName(typeof(eColor),i_Color), coloredButton);
+            m_ColorButtons.Add(Enum.GetName(typeof(eColor), i_Color), coloredButton);
         }
     }
 }
