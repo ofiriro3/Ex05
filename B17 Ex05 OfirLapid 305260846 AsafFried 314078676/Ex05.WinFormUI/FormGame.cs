@@ -8,11 +8,12 @@ namespace Ex05.WinFormUI
 {
     public class FormGame : Form
     {
+       
         private static Game m_Game;
         private const int k_ColorButtonSpacing = 8;
-        FormLogin m_LoginForm = new FormLogin();
+        private FormLogin m_LoginForm = new FormLogin();
         static FormColorChoice m_ColorChoiceForm = new FormColorChoice();
-        List<GuessRow> m_GameRows;
+        private List<GuessRow> m_GameRows;
         private readonly int r_SelectedNumberOfChances;
         private SolutionRow m_SolutionRow; 
 
