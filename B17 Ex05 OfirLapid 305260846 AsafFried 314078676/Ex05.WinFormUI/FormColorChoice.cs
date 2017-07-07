@@ -1,4 +1,4 @@
-﻿using System;
+﻿﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Text;
@@ -31,14 +31,16 @@ namespace Ex05.WinFormUI
             }
         }
 
-        public FormColorChoice()
+        public FormColorChoice(FormStartPosition i_StartPosition)
         {
             this.Text = "Pick A Color:";
             this.FormBorderStyle = FormBorderStyle.FixedToolWindow;
             this.Size = new System.Drawing.Size(200, 150);
+            this.StartPosition = i_StartPosition;
             m_ColorButtons = new Dictionary<string, GuessColorButton>();
             InitControls();
         }
+
 
         private void InitControls()
         {

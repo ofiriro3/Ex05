@@ -1,4 +1,4 @@
-﻿﻿﻿﻿using System;
+﻿﻿﻿﻿﻿using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Windows.Forms;
@@ -25,7 +25,7 @@ namespace Ex05.WinFormUI
 			this.MaximizeBox = false;
 			this.Text = "Bool Pgia";
             m_LoginForm = new FormLogin();
-            m_ColorChoiceForm = new FormColorChoice();
+            m_ColorChoiceForm = new FormColorChoice(this.StartPosition);
 
         }
 
